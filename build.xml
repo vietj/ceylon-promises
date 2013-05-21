@@ -2,7 +2,7 @@
 <!--
     Sample Ceylon build script using Ant.
 -->
-<project name="vietj.promises" default="run">
+<project name="vietj.promises" default="test">
 
     <property name="ceylon.home" value="/Users/julien/java/ceylon-0.5"/>
     <property name="ceylon.ant.lib" value="${ceylon.home}/lib/ceylon-ant.jar"/>
@@ -42,6 +42,13 @@
 
     <target name="run-js" depends="compile-js">
         <ceylon-run-js module="vietj.promises/0.1.0"/>
+    </target>
+
+    <target name="test" depends="compile">
+        <ceylon-compile encoding="${source.encoding}" src="test-source">
+            <module name="test.vietj.promises"/>
+        </ceylon-compile>
+        <ceylon-run module="test.vietj.promises/0.1.0"/>
     </target>
 
     <target name="clean">
