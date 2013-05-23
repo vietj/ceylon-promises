@@ -1,5 +1,5 @@
-shared interface Promise<D, F> {
+shared interface Promise<Value, Reason> {
 
-  shared formal Promise<R, Exception> then_<R>(R(D) onDone, R(F) onFailed);
+  shared formal Promise<Result, Exception> then_<Result>(Result(Value) onFulfilled, Result(Reason) onRejected);
 
 }

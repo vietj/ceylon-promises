@@ -1,14 +1,14 @@
-shared class Deferred<D, F>() satisfies Handler<D, F> {
+shared class Deferred<Value, Reason>() satisfies Handler<Value, Reason> {
 
   variable Status status = pending;
-  variable {Handler<D, F>*} listeners = {};
-  variable D? doneValue = null;
-  variable F? failedValue = null;
+  variable {Handler<Value, Reason>*} listeners = {};
+  variable Value? val = null;
+  variable Reason? reason = null;
 
-  shared actual Deferred<D, F> resolve(D val) {
+  shared actual Deferred<Value, Reason> resolve(Value val) {
     if (status == pending) {
-      status = done;
-      doneValue = val;
+      status = fulfilled;
+      this.val = val;
       for (listener in listeners) {
         listener.resolve(val);
       }
@@ -16,46 +16,46 @@ shared class Deferred<D, F>() satisfies Handler<D, F> {
     return this;
   }
 
-  shared actual Deferred<D, F> reject(F val) {
+  shared actual Deferred<Value, Reason> reject(Reason reason) {
     if (status == pending) {
-      status = failed;
-      failedValue = val;
+      status = rejected;
+      this.reason = reason;
       for (listener in listeners) {
-        listener.reject(val);
+        listener.reject(reason);
       }
     }
     return this;
   }
 
-  void addListener(Handler<D, F> listener) {
+  void addListener(Handler<Value, Reason> listener) {
     switch (status)
        case (pending) {
          listeners = { listener, *listeners};
        }
-       case (done) {
-         if (exists val = doneValue) { listener.resolve(val); } else { throw Exception("Should not happen"); }
+       case (fulfilled) {
+         if (exists x = val) { listener.resolve(x); } else { throw Exception("Should not happen"); }
        }
-       case (failed) {
-         if (exists val = failedValue) { listener.reject(val); } else { throw Exception("Should not happen"); }
+       case (rejected) {
+         if (exists x = reason) { listener.reject(x); } else { throw Exception("Should not happen"); }
        }
   }
 
-  shared object promise satisfies Promise<D, F> {
+  shared object promise satisfies Promise<Value, Reason> {
 
-    shared actual Promise<R, Exception> then_<R>(R(D) onDone, R(F) onFailed) {
-      Deferred<R, Exception> then_ = Deferred<R, Exception>();
-      object adapter satisfies Handler<D, F> {
-        shared actual void resolve(D done) {
+    shared actual Promise<Result, Exception> then_<Result>(Result(Value) onFulfilled, Result(Reason) onRejected) {
+      Deferred<Result, Exception> then_ = Deferred<Result, Exception>();
+      object adapter satisfies Handler<Value, Reason> {
+        shared actual void resolve(Value val) {
           try {
-            R result = onDone(done);
+            Result result = onFulfilled(val);
             then_.resolve(result);
           } catch (Exception e) {
             then_.reject(e);
           }
         }
-        shared actual void reject(F failed) {
+        shared actual void reject(Reason failed) {
           try {
-            R result = onFailed(failed);
+            Result result = onRejected(failed);
             then_.resolve(result);
           } catch (Exception e) {
             then_.reject(e);

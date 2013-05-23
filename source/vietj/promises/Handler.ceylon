@@ -1,7 +1,7 @@
-shared interface Handler<D, F> {
+shared interface Handler<Value, Reason> {
 
-  shared formal void resolve(D done);
+  shared formal void resolve(Value val);
 
-  shared formal void reject(F failed);
+  shared formal void reject(Reason reason);
 
 }
