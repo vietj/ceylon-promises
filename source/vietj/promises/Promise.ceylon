@@ -1,7 +1,7 @@
 shared interface Promise<Value, Reason> {
 
-  shared formal Promise<Result, Exception> then_<Result>(
-    <Result|Promise<Result,Exception>>(Value)? onFulfilled = null,
-    <Result|Promise<Result,Exception>>(Reason)? onRejected = null);
+  shared formal Promise<FulfilledResult|RejectedResult, Exception> then_<FulfilledResult,RejectedResult>(
+    <FulfilledResult|Promise<FulfilledResult,Exception>>(Value)? onFulfilled = null,
+    <RejectedResult|Promise<RejectedResult,Exception>>(Reason)? onRejected = null);
 
 }

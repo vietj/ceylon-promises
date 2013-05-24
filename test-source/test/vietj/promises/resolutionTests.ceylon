@@ -37,7 +37,7 @@ void testOnFulfilledAdoptPromiseThatResolves() {
     test.d1Reasons.add(reason);
     return test.d2.promise;
   }
-  test.d1.promise.then_<String>(f, g).then_(test.d2Values.add, test.d2Reasons.add);
+  test.d1.promise.then_<String, String>(f, g).then_(test.d2Values.add, test.d2Reasons.add);
   test.check({},{},{},{});
   test.d1.resolve(3);
   test.check({3},{},{},{});
@@ -55,7 +55,7 @@ void testOnFulfilledAdoptPromiseThatRejects() {
     test.d1Reasons.add(reason);
     return test.d2.promise;
   }
-  test.d1.promise.then_<String>(f, g).then_(test.d2Values.add, test.d2Reasons.add);
+  test.d1.promise.then_<String, String>(f, g).then_(test.d2Values.add, test.d2Reasons.add);
   test.check({},{},{},{});
   test.d1.resolve(3);
   test.check({3},{},{},{});
@@ -74,7 +74,7 @@ void testOnRejectedAdoptPromiseThatResolves() {
     test.d1Reasons.add(reason);
     return test.d2.promise;
   }
-  test.d1.promise.then_<String>(f, g).then_(test.d2Values.add, test.d2Reasons.add);
+  test.d1.promise.then_<String, String>(f, g).then_(test.d2Values.add, test.d2Reasons.add);
   test.check({},{},{},{});
   test.d1.reject(3);
   test.check({},{3},{},{});
@@ -92,7 +92,7 @@ void testOnRejectedAdoptPromiseThatRejects() {
     test.d1Reasons.add(reason);
     return test.d2.promise;
   }
-  test.d1.promise.then_<String>(f, g).then_(test.d2Values.add, test.d2Reasons.add);
+  test.d1.promise.then_<String, String>(f, g).then_(test.d2Values.add, test.d2Reasons.add);
   test.check({},{},{},{});
   test.d1.reject(3);
   test.check({},{3},{},{});

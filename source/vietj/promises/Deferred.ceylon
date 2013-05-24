@@ -43,36 +43,41 @@ shared class Deferred<Value, Reason>() {
 
   shared object promise satisfies Promise<Value, Reason> {
 
-    shared actual Promise<Result, Exception> then_<Result>(
-        <Result|Promise<Result,Exception>>(Value)? onFulfilled,
-        <Result|Promise<Result,Exception>>(Reason)? onRejected) {
+    shared actual Promise<FulfilledResult|RejectedResult, Exception> then_<FulfilledResult,RejectedResult>(
+        <FulfilledResult|Promise<FulfilledResult,Exception>>(Value)? onFulfilled,
+        <RejectedResult|Promise<RejectedResult,Exception>>(Reason)? onRejected) {
 
-      Deferred<Result, Exception> then_ = Deferred<Result, Exception>();
+      Deferred<FulfilledResult|RejectedResult, Exception> then_ = Deferred<FulfilledResult|RejectedResult, Exception>();
 
       object adapter satisfies Handler<Value, Reason> {
 
-        void handle<Arg>(Arg arg, Callable<Result|Promise<Result, Exception>,[Arg]> onEvent) {
-          try {
-            Result|Promise<Result, Exception> result = onEvent(arg);
-            if (is Result result) {
-              then_.resolve(result);
-            } else if (is Promise<Result, Exception> result) {
-              result.then_((Result result) => then_.resolve(result), (Exception exception) => then_.reject(exception));
-            }
-          } catch(Exception e) {
-            then_.reject(e);
-          }
-        }
-
         shared actual void resolve(Value val) {
           if (exists onFulfilled) {
-            handle(val, onFulfilled);
+            try {
+              FulfilledResult|Promise<FulfilledResult, Exception> result = onFulfilled(val);
+              if (is FulfilledResult result) {
+                then_.resolve(result);
+              } else if (is Promise<FulfilledResult, Exception> result) {
+                result.then_((FulfilledResult result) => then_.resolve(result), (Exception exception) => then_.reject(exception));
+              }
+            } catch(Exception e) {
+              then_.reject(e);
+            }
           }
         }
 
         shared actual void reject(Reason reason) {
           if (exists onRejected) {
-            handle(reason, onRejected);
+            try {
+              RejectedResult|Promise<RejectedResult, Exception> result = onRejected(reason);
+              if (is RejectedResult result) {
+                then_.resolve(result);
+              } else if (is Promise<RejectedResult, Exception> result) {
+                result.then_((RejectedResult result) => then_.resolve(result), (Exception exception) => then_.reject(exception));
+              }
+            } catch(Exception e) {
+              then_.reject(e);
+            }
           }
         }
       }

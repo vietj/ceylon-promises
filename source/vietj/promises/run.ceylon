@@ -1,6 +1,7 @@
 void run() {
 
 
+/*
   Deferred<Integer, Integer> deferred = Deferred<Integer, Integer>();
   Deferred<String, Exception> o = Deferred<String, Exception>();
   Promise<String, Exception> f1(Integer i) {
@@ -25,5 +26,6 @@ void run() {
   deferred.resolve(3);
   print("Resolved");
   o.resolve("bilto");
+*/
 
 }
