@@ -63,6 +63,8 @@ shared class Deferred<Value, Reason = Exception>() {
             } catch(Exception e) {
               then_.reject(e);
             }
+          } else if (is FulfilledResult val) {
+            then_.resolve(val);
           }
         }
 
@@ -78,6 +80,8 @@ shared class Deferred<Value, Reason = Exception>() {
             } catch(Exception e) {
               then_.reject(e);
             }
+          } else if (is Exception reason) {
+            then_.reject(reason);
           }
         }
       }
