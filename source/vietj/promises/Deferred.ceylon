@@ -1,4 +1,4 @@
-shared class Deferred<Value, Reason>() {
+shared class Deferred<Value, Reason = Exception>() {
 
   variable Status status = pending;
   variable Value|Reason|Null state = null;
