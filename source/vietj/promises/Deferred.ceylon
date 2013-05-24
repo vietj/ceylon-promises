@@ -1,14 +1,13 @@
 shared class Deferred<Value, Reason>() {
 
   variable Status status = pending;
+  variable Value|Reason|Null state = null;
   variable {Handler<Value, Reason>*} listeners = {};
-  variable Value? val = null;
-  variable Reason? reason = null;
 
   shared Deferred<Value, Reason> resolve(Value val) {
     if (status == pending) {
       status = fulfilled;
-      this.val = val;
+      state = val;
       for (listener in listeners) {
         listener.resolve(val);
       }
@@ -19,7 +18,7 @@ shared class Deferred<Value, Reason>() {
   shared Deferred<Value, Reason> reject(Reason reason) {
     if (status == pending) {
       status = rejected;
-      this.reason = reason;
+      state = reason;
       for (listener in listeners) {
         listener.reject(reason);
       }
@@ -33,10 +32,12 @@ shared class Deferred<Value, Reason>() {
          listeners = { listener, *listeners};
        }
        case (fulfilled) {
-         if (exists x = val) { listener.resolve(x); } else { throw Exception("Should not happen"); }
+         Value|Reason|Null state = this.state;
+         if (is Value state) { listener.resolve(state); } else { throw Exception("Should not happen"); }
        }
        case (rejected) {
-         if (exists x = reason) { listener.reject(x); } else { throw Exception("Should not happen"); }
+         Value|Reason|Null state = this.state;
+         if (is Reason state) { listener.reject(state); } else { throw Exception("Should not happen"); }
        }
   }
 
