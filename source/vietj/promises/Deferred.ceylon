@@ -44,8 +44,8 @@ shared class Deferred<Value, Reason>() {
   shared object promise satisfies Promise<Value, Reason> {
 
     shared actual Promise<Result, Exception> then_<Result>(
-        Callable<Result|Promise<Result, Exception>,[Value]>? onFulfilled,
-        Callable<Result|Promise<Result,Exception>,[Reason]>? onRejected) {
+        <Result|Promise<Result,Exception>>(Value)? onFulfilled,
+        <Result|Promise<Result,Exception>>(Reason)? onRejected) {
 
       Deferred<Result, Exception> then_ = Deferred<Result, Exception>();
 
