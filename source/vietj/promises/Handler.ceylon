@@ -1,4 +1,4 @@
-shared interface Handler<Value, Reason> {
+interface Handler<Value, Reason> {
 
   shared formal void resolve(Value val);
 
