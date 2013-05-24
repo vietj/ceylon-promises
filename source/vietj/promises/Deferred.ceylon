@@ -42,21 +42,29 @@ shared class Deferred<Value, Reason>() satisfies Handler<Value, Reason> {
 
   shared object promise satisfies Promise<Value, Reason> {
 
-    shared actual Promise<Result, Exception> then_<Result>(Result(Value) onFulfilled, Result(Reason) onRejected) {
+    shared actual Promise<Result, Exception> then_<Result>(Callable<Result|Promise<Result, Exception>,[Value]> onFulfilled, Callable<Result|Promise<Result,Exception>,[Reason]> onRejected) {
       Deferred<Result, Exception> then_ = Deferred<Result, Exception>();
       object adapter satisfies Handler<Value, Reason> {
         shared actual void resolve(Value val) {
           try {
-            Result result = onFulfilled(val);
-            then_.resolve(result);
-          } catch (Exception e) {
+            Result|Promise<Result, Exception> result = onFulfilled(val);
+            if (is Result result) {
+              then_.resolve(result);
+            } else if (is Promise<Result, Exception> result) {
+              result.then_((Result result) => then_.resolve(result), (Exception exception) => then_.reject(exception));
+            }
+          } catch(Exception e) {
             then_.reject(e);
           }
         }
-        shared actual void reject(Reason failed) {
+        shared actual void reject(Reason reason) {
           try {
-            Result result = onRejected(failed);
-            then_.resolve(result);
+            Result|Promise<Result,Exception> result = onRejected(reason);
+            if (is Result result) {
+              then_.resolve(result);
+            } else if (is Promise<Result, Exception> result) {
+              result.then_((Result result) => then_.resolve(result), (Exception exception) => then_.reject(exception));
+            }
           } catch (Exception e) {
             then_.reject(e);
           }
