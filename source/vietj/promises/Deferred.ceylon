@@ -43,7 +43,10 @@ shared class Deferred<Value, Reason>() {
 
   shared object promise satisfies Promise<Value, Reason> {
 
-    shared actual Promise<Result, Exception> then_<Result>(Callable<Result|Promise<Result, Exception>,[Value]> onFulfilled, Callable<Result|Promise<Result,Exception>,[Reason]> onRejected) {
+    shared actual Promise<Result, Exception> then_<Result>(
+        Callable<Result|Promise<Result, Exception>,[Value]>? onFulfilled,
+        Callable<Result|Promise<Result,Exception>,[Reason]>? onRejected) {
+
       Deferred<Result, Exception> then_ = Deferred<Result, Exception>();
 
       object adapter satisfies Handler<Value, Reason> {
@@ -62,11 +65,15 @@ shared class Deferred<Value, Reason>() {
         }
 
         shared actual void resolve(Value val) {
-          handle(val, onFulfilled);
+          if (exists onFulfilled) {
+            handle(val, onFulfilled);
+          }
         }
 
         shared actual void reject(Reason reason) {
-          handle(reason, onRejected);
+          if (exists onRejected) {
+            handle(reason, onRejected);
+          }
         }
       }
 
