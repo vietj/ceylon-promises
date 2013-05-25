@@ -1,7 +1,18 @@
-shared interface Promise<Value, Reason = Exception> {
+shared interface Promise<Value> {
 
-  shared formal Promise<FulfilledResult|RejectedResult, Exception> then_<FulfilledResult,RejectedResult>(
-    <FulfilledResult|Promise<FulfilledResult,Exception>>(Value)? onFulfilled = null,
-    <RejectedResult|Promise<RejectedResult,Exception>>(Reason)? onRejected = null);
+  M rethrow<M>(Exception e) {
+    throw e;
+  }
+
+  M safeCast<M, N>(N n) {
+    if (is M n) {
+      return n;
+    } else {
+      // todo : this could be done better by returning null instead of changing the control flow of the promise
+      throw Exception("Could not convert type");
+    }
+  }
+
+  shared formal Promise<Result> then_<Result>(<Result|Promise<Result>>(Value) onFulfilled = safeCast<Result, Value>, <Result|Promise<Result>>(Exception) onRejected = rethrow<Result>);
 
 }

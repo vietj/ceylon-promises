@@ -14,12 +14,12 @@ shared void resolutionTests() {
 
 class Test() {
   shared LinkedList<Integer> d1Values = LinkedList<Integer>();
-  shared LinkedList<Integer> d1Reasons = LinkedList<Integer>();
+  shared LinkedList<Exception> d1Reasons = LinkedList<Exception>();
   shared LinkedList<String> d2Values = LinkedList<String>();
   shared LinkedList<Exception> d2Reasons = LinkedList<Exception>();
-  shared Deferred<Integer, Integer> d1 = Deferred<Integer, Integer>();
-  shared Deferred<String, Exception> d2 = Deferred<String, Exception>();
-  shared void check({Integer*} expectedD1Values, {Integer*} expectedD1Reasons, {String*} expectedD2Values, {Exception*} expectedD2Reasons) {
+  shared Deferred<Integer> d1 = Deferred<Integer>();
+  shared Deferred<String> d2 = Deferred<String>();
+  shared void check({Integer*} expectedD1Values, {Exception*} expectedD1Reasons, {String*} expectedD2Values, {Exception*} expectedD2Reasons) {
     assertEquals { expected = expectedD1Values; actual = d1Values; };
     assertEquals { expected = expectedD1Reasons; actual = d1Reasons; };
     assertEquals { expected = expectedD2Values; actual = d2Values; };
@@ -29,15 +29,15 @@ class Test() {
 
 void testOnFulfilledAdoptPromiseThatResolves() {
   Test test = Test();
-  Promise<String, Exception> f(Integer val) {
+  Promise<String> f(Integer val) {
     test.d1Values.add(val);
     return test.d2.promise;
   }
-  Promise<String, Exception> g(Integer reason) {
+  Promise<String> g(Exception reason) {
     test.d1Reasons.add(reason);
     return test.d2.promise;
   }
-  test.d1.promise.then_<String, String>(f, g).then_(test.d2Values.add, test.d2Reasons.add);
+  test.d1.promise.then_<String>(f, g).then_(test.d2Values.add, test.d2Reasons.add);
   test.check({},{},{},{});
   test.d1.resolve(3);
   test.check({3},{},{},{});
@@ -47,15 +47,15 @@ void testOnFulfilledAdoptPromiseThatResolves() {
 
 void testOnFulfilledAdoptPromiseThatRejects() {
   Test test = Test();
-  Promise<String, Exception> f(Integer val) {
+  Promise<String> f(Integer val) {
     test.d1Values.add(val);
     return test.d2.promise;
   }
-  Promise<String, Exception> g(Integer reason) {
+  Promise<String> g(Exception reason) {
     test.d1Reasons.add(reason);
     return test.d2.promise;
   }
-  test.d1.promise.then_<String, String>(f, g).then_(test.d2Values.add, test.d2Reasons.add);
+  test.d1.promise.then_<String>(f, g).then_(test.d2Values.add, test.d2Reasons.add);
   test.check({},{},{},{});
   test.d1.resolve(3);
   test.check({3},{},{},{});
@@ -63,40 +63,40 @@ void testOnFulfilledAdoptPromiseThatRejects() {
   test.d2.reject(e);
   test.check({3},{},{},{e});
 }
-
 void testOnRejectedAdoptPromiseThatResolves() {
   Test test = Test();
-  Promise<String, Exception> f(Integer val) {
+  Promise<String> f(Integer val) {
     test.d1Values.add(val);
     return test.d2.promise;
   }
-  Promise<String, Exception> g(Integer reason) {
+  Promise<String> g(Exception reason) {
     test.d1Reasons.add(reason);
     return test.d2.promise;
   }
-  test.d1.promise.then_<String, String>(f, g).then_(test.d2Values.add, test.d2Reasons.add);
+  test.d1.promise.then_<String>(f, g).then_(test.d2Values.add, test.d2Reasons.add);
   test.check({},{},{},{});
-  test.d1.reject(3);
-  test.check({},{3},{},{});
+  Exception e = Exception();
+  test.d1.reject(e);
+  test.check({},{e},{},{});
   test.d2.resolve("foo");
-  test.check({},{3},{"foo"},{});
+  test.check({},{e},{"foo"},{});
 }
-
 void testOnRejectedAdoptPromiseThatRejects() {
   Test test = Test();
-  Promise<String, Exception> f(Integer val) {
+  Promise<String> f(Integer val) {
     test.d1Values.add(val);
     return test.d2.promise;
   }
-  Promise<String, Exception> g(Integer reason) {
+  Promise<String> g(Exception reason) {
     test.d1Reasons.add(reason);
     return test.d2.promise;
   }
-  test.d1.promise.then_<String, String>(f, g).then_(test.d2Values.add, test.d2Reasons.add);
+  test.d1.promise.then_<String>(f, g).then_(test.d2Values.add, test.d2Reasons.add);
   test.check({},{},{},{});
-  test.d1.reject(3);
-  test.check({},{3},{},{});
-  Exception e = Exception();
-  test.d2.reject(e);
-  test.check({},{3},{},{e});
+  Exception e1 = Exception();
+  test.d1.reject(e1);
+  test.check({},{e1},{},{});
+  Exception e2 = Exception();
+  test.d2.reject(e2);
+  test.check({},{e1},{},{e2});
 }

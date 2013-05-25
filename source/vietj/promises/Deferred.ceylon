@@ -1,93 +1,93 @@
-shared class Deferred<Value, Reason = Exception>() {
+shared class Deferred<Value>() {
 
-  variable Status status = pending;
-  variable Value|Reason|Null state = null;
-  variable {Handler<Value, Reason>*} listeners = {};
+  variable Promise<Value>? state = null;
+  variable {[Anything(Value),Anything(Exception)]*} listeners = {};
 
-  shared Deferred<Value, Reason> resolve(Value val) {
-    if (status == pending) {
-      status = fulfilled;
-      state = val;
-      for (listener in listeners) {
-        listener.resolve(val);
-      }
-    }
-    return this;
-  }
-
-  shared Deferred<Value, Reason> reject(Reason reason) {
-    if (status == pending) {
-      status = rejected;
-      state = reason;
-      for (listener in listeners) {
-        listener.reject(reason);
-      }
-    }
-    return this;
-  }
-
-  void addListener(Handler<Value, Reason> listener) {
-    switch (status)
-       case (pending) {
-         listeners = { listener, *listeners};
-       }
-       case (fulfilled) {
-         Value|Reason|Null state = this.state;
-         if (is Value state) { listener.resolve(state); } else { throw Exception("Should not happen"); }
-       }
-       case (rejected) {
-         Value|Reason|Null state = this.state;
-         if (is Reason state) { listener.reject(state); } else { throw Exception("Should not happen"); }
-       }
-  }
-
-  shared object promise satisfies Promise<Value, Reason> {
-
-    shared actual Promise<FulfilledResult|RejectedResult, Exception> then_<FulfilledResult,RejectedResult>(
-        <FulfilledResult|Promise<FulfilledResult,Exception>>(Value)? onFulfilled,
-        <RejectedResult|Promise<RejectedResult,Exception>>(Reason)? onRejected) {
-
-      Deferred<FulfilledResult|RejectedResult, Exception> then_ = Deferred<FulfilledResult|RejectedResult, Exception>();
-
-      object adapter satisfies Handler<Value, Reason> {
-
-        shared actual void resolve(Value val) {
-          if (exists onFulfilled) {
-            try {
-              FulfilledResult|Promise<FulfilledResult, Exception> result = onFulfilled(val);
-              if (is FulfilledResult result) {
-                then_.resolve(result);
-              } else if (is Promise<FulfilledResult, Exception> result) {
-                result.then_((FulfilledResult result) => then_.resolve(result), (Exception exception) => then_.reject(exception));
-              }
-            } catch(Exception e) {
-              then_.reject(e);
-            }
-          } else if (is FulfilledResult val) {
-            then_.resolve(val);
-          }
-        }
-
-        shared actual void reject(Reason reason) {
-          if (exists onRejected) {
-            try {
-              RejectedResult|Promise<RejectedResult, Exception> result = onRejected(reason);
-              if (is RejectedResult result) {
-                then_.resolve(result);
-              } else if (is Promise<RejectedResult, Exception> result) {
-                result.then_((RejectedResult result) => then_.resolve(result), (Exception exception) => then_.reject(exception));
-              }
-            } catch(Exception e) {
-              then_.reject(e);
-            }
-          } else if (is Exception reason) {
-            then_.reject(reason);
+  Promise<T> adaptValue<T>(T|Promise<T> arg) {
+    if (is T arg) {
+      object adapter satisfies Promise<T> {
+        shared actual Promise<Result> then_<Result>(<Result|Promise<Result>>(T) onFulfilled, <Result|Promise<Result>>(Exception) onRejected) {
+          try {
+            Result|Promise<Result> result = onFulfilled(arg);
+            return adaptValue(result);
+          } catch(Exception e) {
+            return adaptReason<Result>(e);
           }
         }
       }
-
-      addListener(adapter);
-      return then_.promise;
+      return adapter;
+    } else if (is Promise<T> arg) {
+      return arg;
+    } else {
+      throw Exception("not possible");
     }
+  }
+
+  Promise<T> adaptReason<T>(Exception e) {
+    object adapted satisfies Promise<T> {
+      shared actual Promise<Result> then_<Result>(<Result|Promise<Result>>(T) onFulfilled, <Result|Promise<Result>>(Exception) onRejected) {
+        try {
+          <Result|Promise<Result>> result = onRejected(e);
+          return adaptValue<Result>(result);
+        } catch(Exception e) {
+          return adaptReason<Result>(e);
+        }
+      }
+    }
+    return adapted;
+  }
+
+  shared Deferred<Value> resolve(Value|Promise<Value> val) {
+    Promise<Value> adapted = adaptValue(val);
+    set(adapted);
+    return this;
+  }
+
+  shared Deferred<Value> reject(Exception reason) {
+    Promise<Value> adapted = adaptReason<Value>(reason);
+    set(adapted);
+    return this;
+  }
+
+  void set(Promise<Value> state) {
+    if (exists tmp = this.state) {
+    } else {
+      this.state = state;
+      for (listener in listeners) {
+        state.then_(listener[0], listener[1]);
+      }
+    }
+  }
+
+  shared object promise satisfies Promise<Value> {
+
+    shared actual Promise<Result> then_<Result>(<Result|Promise<Result>>(Value) onFulfilled, <Result|Promise<Result>>(Exception) onRejected) {
+      Deferred<Result> deferred = Deferred<Result>();
+
+      void callback<T>(<Result|Promise<Result>>(T) on, T val) {
+        try {
+          Result|Promise<Result> result = on(val);
+          deferred.resolve(result);
+        } catch(Exception e) {
+          deferred.reject(e);
+        }
+      }
+
+      void onFulfilledCallback(Value val) {
+        callback(onFulfilled, val);
+      }
+      void onRejectedCallback(Exception reason) {
+        callback(onRejected, reason);
+      }
+
+      if (exists tmp = state) {
+        tmp.then_(onFulfilledCallback, onRejectedCallback);
+      } else {
+        listeners = {[onFulfilledCallback, onRejectedCallback], *listeners};
+      }
+
+      return deferred.promise;
+    }
+
   }
 }

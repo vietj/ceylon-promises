@@ -2,9 +2,9 @@ import vietj.promises { ... }
 import ceylon.test { ... }
 import ceylon.collection { ... }
 
-class Thrower() {
+class Thrower<T>() {
   shared LinkedList<Exception> thrown = LinkedList<Exception>();
-  shared String m(Integer i) {
+  shared String m(T t) {
     Exception e = Exception();
     thrown.add(e);
     throw e;
@@ -22,47 +22,43 @@ shared void thenTests() {
 }
 
 void testReturnedPromiseMustBeRejectWithSameReasonWhenOnFulfilledThrowsAnException() {
-  Thrower doneThrower = Thrower();
-  Thrower failedThrower = Thrower();
+  Thrower<Integer> doneThrower = Thrower<Integer>();
   LinkedList<String> done = LinkedList<String>();
+  Thrower<Exception> failedThrower = Thrower<Exception>();
   LinkedList<Exception> failed = LinkedList<Exception>();
-  Deferred<Integer, Integer> deferred = Deferred<Integer, Integer>();
+  Deferred<Integer> deferred = Deferred<Integer>();
   deferred.promise.then_(doneThrower.m, failedThrower.m).then_(done.add, failed.add);
   deferred.resolve(3);
-  assertEquals { expected = 0; actual = done.size; };
-  assertEquals { expected = 1; actual = doneThrower.thrown.size; };
-  assertEquals { expected = 1; actual = failed.size; };
-  assertEquals { expected = doneThrower.thrown[0]; actual = failed[0]; };
-  assertEquals { expected = 0; actual = failedThrower.thrown.size; };
+  assertEquals { expected = {}; actual = done; };
+  assertEquals { expected = failed; actual = doneThrower.thrown; };
+  assertEquals { expected = {}; actual = failedThrower.thrown; };
 }
 
 void testReturnedPromiseMustBeRejectWithSameReasonWhenOnRejectedThrowsAnException() {
-  Thrower doneThrower = Thrower();
-  Thrower failedThrower = Thrower();
+  Thrower<Integer> doneThrower = Thrower<Integer>();
+  Thrower<Exception> failedThrower = Thrower<Exception>();
   LinkedList<String> done = LinkedList<String>();
   LinkedList<Exception> failed = LinkedList<Exception>();
-  Deferred<Integer, Integer> deferred = Deferred<Integer, Integer>();
+  Deferred<Integer> deferred = Deferred<Integer>();
   deferred.promise.then_(doneThrower.m, failedThrower.m).then_(done.add, failed.add);
-  deferred.reject(3);
-  assertEquals { expected = 0; actual = done.size; };
-  assertEquals { expected = 0; actual = doneThrower.thrown.size; };
-  assertEquals { expected = 1; actual = failedThrower.thrown.size; };
-  assertEquals { expected = 1; actual = failed.size; };
-  assertEquals { expected = failedThrower.thrown[0]; actual = failed[0]; };
+  deferred.reject(Exception());
+  assertEquals { expected = {}; actual = done; };
+  assertEquals { expected = {}; actual = doneThrower.thrown; };
+  assertEquals { expected = failed; actual = failedThrower.thrown; };
 }
 
 void testReturnedPromiseMustBeFulfilledWithSameValueWhenOnFulfilledIsNotAFunction() {
   LinkedList<String> a = LinkedList<String>();
-  Deferred<String, String> d = Deferred<String, String>();
-  d.promise.then_<String, String>().then_(a.add);
+  Deferred<String> d = Deferred<String>();
+  d.promise.then_<String>().then_(a.add);
   d.resolve("a");
   assertEquals { expected = {"a"}; actual = a; };
 }
 
 void testReturnedPromiseMustBeRejectedWithSameValueWhenOnRejectedIsNotAFunction() {
   LinkedList<Exception> a = LinkedList<Exception>();
-  Deferred<String, Exception> d = Deferred<String, Exception>();
-  d.promise.then_<String, Exception>().then_{ onRejected = a.add; };
+  Deferred<String> d = Deferred<String>();
+  d.promise.then_((String s) => s).then_{ onRejected = a.add; };
   Exception e = Exception();
   d.reject(e);
   assertEquals { expected = {e}; actual = a; };
