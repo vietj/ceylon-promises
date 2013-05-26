@@ -1,3 +1,7 @@
+object bilto {
+  shared Deferred<[]> deferred = Deferred<[]>().resolve([]);
+}
+
 shared interface Promise<Value> {
 
   M rethrow<M>(Exception e) {
@@ -15,8 +19,9 @@ shared interface Promise<Value> {
 
   shared formal Promise<Result> then_<Result>(<Result|Promise<Result>>(Value) onFulfilled = safeCast<Result, Value>, <Result|Promise<Result>>(Exception) onRejected = rethrow<Result>);
 
-  shared All<Other|Value,Other,[Value]> and<Other>(Promise<Other> other) {
-    return All(this, noRef, 0).and(other);
+  shared And<Other|Value,Other,[Value]> and<Other>(Promise<Other> other) {
+    Promise<[]> p = bilto.deferred.promise;
+    return And(this, p).and(other);
   }
 
 }

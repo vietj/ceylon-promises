@@ -1,15 +1,23 @@
 void run() {
 
+  //
   Deferred<Boolean> d1 = Deferred<Boolean>();
   Deferred<String> d2 = Deferred<String>();
   Deferred<Integer> d3 = Deferred<Integer>();
   Promise<Boolean> b1 = d1.promise;
   Promise<String> b2 = d2.promise;
   Promise<Integer> b3 = d3.promise;
-  b1.and(b2).and(b3).all().then_(([Integer, String, Boolean] args) => print(args));
+  b1.and(b2).and(b3).promise.then_(([Integer, String, Boolean] args) => print(args));
   d1.resolve(true);
   d2.resolve("abc");
   d3.resolve(4);
+
+  Deferred<Boolean> e1 = Deferred<Boolean>();
+  Deferred<String> e2 = Deferred<String>();
+  Promise<Boolean> f1 = e1.promise;
+  Promise<String> f2 = e2.promise;
+  f1.and(f2).promise.then_(([String, Boolean] args) => print(args), (Exception e) => print("REJECTED"));
+  e1.reject(Exception());
 
 //  [String, Boolean] result = step.tuple();
 //  print("-> ``result``");
