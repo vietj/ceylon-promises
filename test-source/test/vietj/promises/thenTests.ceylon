@@ -14,11 +14,31 @@ class Thrower<T>() {
 @doc "Test the then method but not the Promise Resolution Procedure"
 shared void thenTests() {
 
+  testAllRespectiveFulfilledCallbacksMustExecuteInTheOrderOfTheirOriginatingCallsToThen();
+  testAllRespectiveRejectedCallbacksMustExecuteInTheOrderOfTheirOriginatingCallsToThen();
   testReturnedPromiseMustBeRejectWithSameReasonWhenOnFulfilledThrowsAnException();
   testReturnedPromiseMustBeRejectWithSameReasonWhenOnRejectedThrowsAnException();
   testReturnedPromiseMustBeFulfilledWithSameValueWhenOnFulfilledIsNotAFunction();
   testReturnedPromiseMustBeRejectedWithSameValueWhenOnRejectedIsNotAFunction();
 
+}
+
+void testAllRespectiveFulfilledCallbacksMustExecuteInTheOrderOfTheirOriginatingCallsToThen() {
+  value calls = LinkedList<Integer>();
+  value d = Deferred<String>();	
+  d.promise.then_((String s) => calls.add(1));
+  d.promise.then_((String s) => calls.add(2));
+  d.resolve("");
+  assertEquals { expected = {1,2}; actual = calls; };
+}
+
+void testAllRespectiveRejectedCallbacksMustExecuteInTheOrderOfTheirOriginatingCallsToThen() {
+  value calls = LinkedList<Integer>();
+  value d = Deferred<String>();	
+  d.promise.then_{ onRejected = (Exception e) => calls.add(1); };
+  d.promise.then_{ onRejected = (Exception e) => calls.add(2); };
+  d.reject(Exception());
+  assertEquals { expected = {1,2}; actual = calls; };
 }
 
 void testReturnedPromiseMustBeRejectWithSameReasonWhenOnFulfilledThrowsAnException() {

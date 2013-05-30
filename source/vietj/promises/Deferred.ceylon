@@ -1,7 +1,7 @@
 shared class Deferred<Value>() {
 
   variable Promise<Value>? state = null;
-  variable {[Anything(Value),Anything(Exception)]*} listeners = {};
+  variable [Anything(Value),Anything(Exception)][] listeners = {};
 
   Promise<T> adaptValue<T>(T|Promise<T> arg) {
     if (is T arg) {
@@ -83,7 +83,7 @@ shared class Deferred<Value>() {
       if (exists tmp = state) {
         tmp.then_(onFulfilledCallback, onRejectedCallback);
       } else {
-        listeners = {[onFulfilledCallback, onRejectedCallback], *listeners};
+        listeners = listeners.withTrailing([onFulfilledCallback, onRejectedCallback]);
       }
 
       return deferred.promise;
