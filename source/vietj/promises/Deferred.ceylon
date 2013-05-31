@@ -1,7 +1,10 @@
 shared class Deferred<Value>() {
 
   variable Promise<Value>? state = null;
+  variable Status current = pending;
   variable [Anything(Value),Anything(Exception)][] listeners = {};
+  
+  listeners = listeners.withTrailing([(Value v) => current = fulfilled, (Exception e) => current = rejected]);
 
   Promise<T> adaptValue<T>(T|Promise<T> arg) {
     if (is T arg) {
@@ -59,7 +62,19 @@ shared class Deferred<Value>() {
     }
   }
 
-  shared object promise satisfies Promise<Value> {
+  @doc "Return the current deferred status"
+  shared Status status => current;
+
+  @doc "Return true if the current promise is fulfilled"
+  shared Boolean isFulfilled => status == fulfilled;
+
+  @doc "Return true if the current promise is rejected"
+  shared Boolean isRejected => status == rejected;
+
+  @doc "Return true if the current promise is fulfilled"
+  shared Boolean isPending => status == pending;
+
+    shared object promise satisfies Promise<Value> {
 
     shared actual Promise<Result> then_<Result>(<Result|Promise<Result>>(Value) onFulfilled, <Result|Promise<Result>>(Exception) onRejected) {
       Deferred<Result> deferred = Deferred<Result>();

@@ -16,7 +16,7 @@ shared interface Promise<Value> {
       throw Exception("Could not convert type");
     }
   }
-
+  
   shared formal Promise<Result> then_<Result>(<Result|Promise<Result>>(Value) onFulfilled = safeCast<Result, Value>, <Result|Promise<Result>>(Exception) onRejected = rethrow<Result>);
 
   shared And<Other|Value,Other,[Value]> and<Other>(Promise<Other> other) {

@@ -24,7 +24,24 @@ void testRejectedRejectionHandlerReturnsAValue() {
   assertEquals { expected = {}; actual = failed.collected; };
 }
 
+void testFulfillementState() {
+  Deferred<Integer> deferred = Deferred<Integer>();
+  assertEquals { expected = pending; actual = deferred.status; };
+  deferred.resolve(3);
+  assertEquals { expected = fulfilled; actual = deferred.status; };
+}
+
+void testRejectedState() {
+  Deferred<Integer> deferred = Deferred<Integer>();
+  Exception e = Exception();
+  assertEquals { expected = pending; actual = deferred.status; };
+  deferred.reject(e);
+  assertEquals { expected = rejected; actual = deferred.status; };
+}
+
 shared void promiseTests() {
+  testFulfillementState();
+  testRejectedState();
   testFulfilledFulfillmentHandlerReturnsValue();
   testRejectedRejectionHandlerReturnsAValue();
 }
