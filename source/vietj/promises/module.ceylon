@@ -1,4 +1,4 @@
-@doc "A module that provides Promises/A+ semantics adapted to the Ceylon language.
+doc "A module that provides Promises/A+ semantics adapted to the Ceylon language.
 
       This implementation conforms to the [Promises/A+](https://github.com/promises-aplus/promises-tests) specification although
       it is not a formal implementation due to the adaptation to the Ceylon language and type system. However it attempts
@@ -15,7 +15,8 @@
       - the *then must return before onFulfilled or onRejected is called* is not implemented, therefore the invocation
       occurs inside the invocation of then.
       - the *Promise Resolution Procedure* is implemented for objects or promises but not for *thenable* as it requires
-      a language with dynamic typing.
-      "
+      a language with dynamic typing."
+by "Julien Viet"
+license "ASL2"
 module vietj.promises '0.1.0' {
 }
