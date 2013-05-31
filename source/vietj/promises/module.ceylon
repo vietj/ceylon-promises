@@ -16,9 +16,6 @@
       occurs inside the invocation of then.
       - the *Promise Resolution Procedure* is implemented for objects or promises but not for *thenable* as it requires
       a language with dynamic typing.
-
-      For more
-
-"
+      "
 module vietj.promises '0.1.0' {
 }

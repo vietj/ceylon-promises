@@ -1,3 +1,10 @@
+@doc "The deferred class is the primary implementation of the [[Promise] interface.
+      
+      The promise is accessible using the `promise` attribute of the deferred.
+      
+      The deferred can either be resolved or rejected via the `resolve` or `reject` methods. Both
+      methods accept an argument or a promise to the argument, allowing the deferred to react
+      on a promise."
 shared class Deferred<Value>() {
 
   variable Promise<Value>? state = null;
@@ -40,12 +47,14 @@ shared class Deferred<Value>() {
     return adapted;
   }
 
+  @doc "Resolve the promise with a value or a promise to the value."
   shared Deferred<Value> resolve(Value|Promise<Value> val) {
     Promise<Value> adapted = adaptValue(val);
     set(adapted);
     return this;
   }
 
+  @doc "Reject the promise with a reason or a promise to the reason."
   shared Deferred<Value> reject(Exception reason) {
     Promise<Value> adapted = adaptReason<Value>(reason);
     set(adapted);
@@ -62,19 +71,20 @@ shared class Deferred<Value>() {
     }
   }
 
-  @doc "Return the current deferred status"
+  @doc "Return the current deferred status."
   shared Status status => current;
 
-  @doc "Return true if the current promise is fulfilled"
+  @doc "Return true if the current promise is fulfilled."
   shared Boolean isFulfilled => status == fulfilled;
 
-  @doc "Return true if the current promise is rejected"
+  @doc "Return true if the current promise is rejected."
   shared Boolean isRejected => status == rejected;
 
-  @doc "Return true if the current promise is fulfilled"
+  @doc "Return true if the current promise is fulfilled."
   shared Boolean isPending => status == pending;
 
-    shared object promise satisfies Promise<Value> {
+  @doc "The promise of this deferred."
+  shared object promise satisfies Promise<Value> {
 
     shared actual Promise<Result> then_<Result>(<Result|Promise<Result>>(Value) onFulfilled, <Result|Promise<Result>>(Exception) onRejected) {
       Deferred<Result> deferred = Deferred<Result>();
@@ -103,6 +113,5 @@ shared class Deferred<Value>() {
 
       return deferred.promise;
     }
-
   }
 }

@@ -1,3 +1,9 @@
+@doc "Combines two promises into a new promise.
+      
+      The new promise
+      - is resolved when both promises are resolved
+      - is rejected when any of the two promise is rejected
+      "
 shared class And<Element, First, Rest>(Promise<First> first, Promise<Rest> rest)
  given First satisfies Element
  given Rest satisfies Sequential<Element> {
@@ -32,6 +38,7 @@ shared class And<Element, First, Rest>(Promise<First> first, Promise<Rest> rest)
   }
   first.then_(onFirstFulfilled, onReject);
 
+  @doc "Combine the current conjonction with a new promise."
   shared And<NewFirst|Element, NewFirst, Tuple<First|Element, First, Rest>> and<NewFirst>(Promise<NewFirst> newFirst) {
     return And(newFirst, promise);
   }

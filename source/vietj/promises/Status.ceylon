@@ -1,4 +1,4 @@
-@doc "A promise must be in one of three states: pending, fulfilled, or rejected" 
+@doc "A promise must be in one of three states: pending, fulfilled, or rejected." 
 shared abstract class Status(shared String name) of pending | fulfilled | rejected {}
 
 @doc "When pending, a promise may transition to either the fulfilled or rejected state."
