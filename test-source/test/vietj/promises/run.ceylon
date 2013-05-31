@@ -16,6 +16,7 @@ void run() {
   suite("vietj.promises", "Promise" -> promiseTests);
   suite("vietj.then", "Then method" -> thenTests);
   suite("vietj.resolution", "Resolution Procedure" -> resolutionTests);
+  suite("vietj.conjonction", "Conjonction" -> conjonctionTests);
 
   useCases();
 
