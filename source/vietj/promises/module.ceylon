@@ -35,5 +35,5 @@ doc "A module that provides Promises/A+ semantics adapted to the Ceylon language
       a language with dynamic typing."
 by "Julien Viet"
 license "ASL2"
-module vietj.promises '0.2.0' {
+module vietj.promises '0.3.0' {
 }
