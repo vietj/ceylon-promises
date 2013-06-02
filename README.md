@@ -44,7 +44,9 @@ a language with dynamic typing.
 
     value d1 = Deferred<String>();
     value d2 = Deferred<Integer>();
-    d1.and(d2).promise.then_(([Integer, String] arg) => print("Resolved with ``arg``"));
+    value p1 = d1.promise;
+    value p2 = d2.promise;
+    p1.and(p2).then_((Integer i, String s) => print("Resolved with ``i`` and ``s``"));
     d1.resolve("foo");
     d2.resolve(5);
 

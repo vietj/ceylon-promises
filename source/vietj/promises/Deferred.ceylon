@@ -30,64 +30,6 @@ shared class Deferred<Value>() {
   
   listeners = listeners.withTrailing([(Value v) => current = fulfilled, (Exception e) => current = rejected]);
 
-  Promise<T> adaptValue<T>(T|Promise<T> arg) {
-    if (is T arg) {
-      object adapter satisfies Promise<T> {
-        shared actual Promise<Result> then_<Result>(<Result|Promise<Result>>(T) onFulfilled, <Result|Promise<Result>>(Exception) onRejected) {
-          try {
-            Result|Promise<Result> result = onFulfilled(arg);
-            return adaptValue(result);
-          } catch(Exception e) {
-            return adaptReason<Result>(e);
-          }
-        }
-      }
-      return adapter;
-    } else if (is Promise<T> arg) {
-      return arg;
-    } else {
-      throw Exception("not possible");
-    }
-  }
-
-  Promise<T> adaptReason<T>(Exception e) {
-    object adapted satisfies Promise<T> {
-      shared actual Promise<Result> then_<Result>(<Result|Promise<Result>>(T) onFulfilled, <Result|Promise<Result>>(Exception) onRejected) {
-        try {
-          <Result|Promise<Result>> result = onRejected(e);
-          return adaptValue<Result>(result);
-        } catch(Exception e) {
-          return adaptReason<Result>(e);
-        }
-      }
-    }
-    return adapted;
-  }
-
-  doc "Resolve the promise with a value or a promise to the value."
-  shared Deferred<Value> resolve(Value|Promise<Value> val) {
-    Promise<Value> adapted = adaptValue(val);
-    set(adapted);
-    return this;
-  }
-
-  doc "Reject the promise with a reason or a promise to the reason."
-  shared Deferred<Value> reject(Exception reason) {
-    Promise<Value> adapted = adaptReason<Value>(reason);
-    set(adapted);
-    return this;
-  }
-
-  void set(Promise<Value> state) {
-    if (exists tmp = this.state) {
-    } else {
-      this.state = state;
-      for (listener in listeners) {
-        state.then_(listener[0], listener[1]);
-      }
-    }
-  }
-
   doc "Return the current deferred status."
   shared Status status => current;
 
@@ -101,7 +43,7 @@ shared class Deferred<Value>() {
   shared Boolean isPending => status == pending;
 
   doc "The promise of this deferred."
-  shared object promise satisfies Promise<Value> {
+  shared object promise extends Promise<Value>() {
 
     shared actual Promise<Result> then_<Result>(<Result|Promise<Result>>(Value) onFulfilled, <Result|Promise<Result>>(Exception) onRejected) {
       Deferred<Result> deferred = Deferred<Result>();
@@ -130,5 +72,61 @@ shared class Deferred<Value>() {
 
       return deferred.promise;
     }
+  }
+
+  Promise<T> adaptValue<T>(T|Promise<T> arg) {
+    if (is T arg) {
+      object adapter extends Promise<T>() {
+        shared actual Promise<Result> then_<Result>(<Result|Promise<Result>>(T) onFulfilled, <Result|Promise<Result>>(Exception) onRejected) {
+          try {
+            Result|Promise<Result> result = onFulfilled(arg);
+            return adaptValue(result);
+          } catch(Exception e) {
+            return adaptReason<Result>(e);
+          }
+        }
+      }
+      return adapter;
+    } else if (is Promise<T> arg) {
+      return arg;
+    } else {
+      throw Exception("not possible");
+    }
+  }
+
+  Promise<T> adaptReason<T>(Exception e) {
+    object adapted extends Promise<T>() {
+      shared actual Promise<Result> then_<Result>(<Result|Promise<Result>>(T) onFulfilled, <Result|Promise<Result>>(Exception) onRejected) {
+        try {
+          <Result|Promise<Result>> result = onRejected(e);
+          return adaptValue<Result>(result);
+        } catch(Exception e) {
+          return adaptReason<Result>(e);
+        }
+      }
+    }
+    return adapted;
+  }
+
+  void set(Promise<Value> state) {
+    if (exists tmp = this.state) {
+    } else {
+      this.state = state;
+      for (listener in listeners) {
+        state.then_(listener[0], listener[1]);
+      }
+    }
+  }
+
+  doc "Resolve the promise with a value or a promise to the value."
+  shared void resolve(Value|Promise<Value> val) {
+    Promise<Value> adapted = adaptValue(val);
+    set(adapted);
+  }
+
+  doc "Reject the promise with a reason or a promise to the reason."
+  shared void reject(Exception reason) {
+    Promise<Value> adapted = adaptReason<Value>(reason);
+    set(adapted);
   }
 }

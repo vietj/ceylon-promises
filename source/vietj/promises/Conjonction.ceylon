@@ -22,12 +22,12 @@ doc "Combines two promises into a new promise.
 by "Julien Viet"
 license "ASL2"
 class Conjonction<Element, First, Rest>(Promise<First> first, Promise<Rest> rest)
- satisfies Term<Element, Tuple<First|Element, First, Rest>> & Thenable<Element, Tuple<First|Element, First, Rest>>
+ satisfies Term<Element, Tuple<First|Element, First, Rest>>
  given First satisfies Element
  given Rest satisfies Sequential<Element> {
 
   Deferred<Tuple<First|Element, First, Rest>> deferred = Deferred<Tuple<First|Element, First, Rest>>();
-  shared Promise<Tuple<First|Element, First, Rest>> promise = deferred.promise;
+  shared actual Promise<Tuple<First|Element, First, Rest>> promise = deferred.promise;
   variable First? firstVal = null;
   variable Rest? restVal = null;
 
@@ -56,7 +56,6 @@ class Conjonction<Element, First, Rest>(Promise<First> first, Promise<Rest> rest
   }
   first.then_(onFirstFulfilled, onReject);
 
-  @doc "Combine the current conjonction with a new promise."
   shared actual Term<Element|Other, Tuple<Element|Other, Other, Tuple<First|Element, First, Rest>>> and<Other>(Promise<Other> other) {
     return Conjonction(other, promise);
   }
@@ -68,4 +67,5 @@ class Conjonction<Element, First, Rest>(Promise<First> first, Promise<Rest> rest
   	}
   	return promise.then_(adapter, onRejected);
   }
+  
 }

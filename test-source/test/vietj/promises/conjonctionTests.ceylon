@@ -21,6 +21,7 @@ shared void conjonctionTests() {
 
   testResolveConjonction();
   testRejectConjonction();
+  testNestedConjonctions();
 
 
 }
@@ -79,3 +80,44 @@ void testRejectConjonction() {
   assertEquals { expected = {}; actual = t3.a; };
   assertEquals { expected = {e}; actual = t3.b; };
 }
+
+void testNestedConjonctions() {
+	
+  value d1 = Deferred<String>();
+  value d2 = Deferred<Integer>();
+  value d3 = Deferred<Boolean>();
+  value d4 = Deferred<Float>();
+  Promise<String> p1 = d1.promise;
+  Promise<Integer> p2 = d2.promise;
+  Promise<Boolean> p3 = d3.promise;
+  Promise<Float> p4 = d4.promise;
+  value s1 = p1.and(p2);
+  value s2 = p3.and(p4);
+  value s3 = s1.and(s2.promise);
+
+  value results = LinkedList<[[Float, Boolean], Integer, String]>();
+  void h([Float, Boolean] a1, Integer a2, String a3) {
+    results.add([a1, a2, a3]);
+  }
+  s3.then_(h);
+  
+  //
+  d1.resolve("a");
+  assertEquals({}, results);
+  
+  //
+  d2.resolve(4);
+  assertEquals({}, results);
+  
+  //
+  d3.resolve(false);
+  assertEquals({}, results);
+  
+  //
+  d4.resolve(0.4);
+  assertEquals({[[0.4, false], 4, "a"]}, results);
+}
+
+
+
+

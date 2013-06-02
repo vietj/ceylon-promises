@@ -18,44 +18,62 @@ import ceylon.test { ... }
 import ceylon.collection { ... }
 
 void testResolve() {
-  void perform(Anything(Deferred<String>) action) {
+	
+  void perform(<String|Exception>* actions) {
     LinkedList<String> done = LinkedList<String>();
     ExceptionCollector failed = ExceptionCollector();
     Deferred<String> deferred = Deferred<String>();
     deferred.promise.then_(done.add, failed.add);
     assertEquals { expected = {}; actual = done; };
     assertEquals { expected = {}; actual = failed.collected; };
-    action(deferred);
+    for (action in actions) {
+      switch (action)
+      	case (is String) {
+          deferred.resolve(action);
+        }
+        case (is Exception) {
+          deferred.reject(action);
+        }
+    }
     assertEquals { expected = {"value"}; actual = done; };
     assertEquals { expected = {}; actual = failed.collected; };
   }
-  perform((Deferred<String> deferred) => deferred.resolve("value"));
-  perform((Deferred<String> deferred) => deferred.resolve("value").resolve("done"));
-  perform((Deferred<String> deferred) => deferred.resolve("value").reject(Exception()));
+  perform("value");
+  perform("value", "done");
+  perform("value", Exception());
 }
 
 void testReject() {
   Exception reason = Exception();
-  void perform(Anything(Deferred<String>) action) {
+  void perform(<String|Exception>* actions) {
     LinkedList<String> done = LinkedList<String>();
     ExceptionCollector failed = ExceptionCollector();
     Deferred<String> deferred = Deferred<String>();
     deferred.promise.then_(done.add, failed.add);
     assertEquals { expected = {}; actual = done; };
     assertEquals { expected = {}; actual = failed.collected; };
-    action(deferred);
+    for (action in actions) {
+      switch (action)
+      	case (is String) {
+          deferred.resolve(action);
+        }
+        case (is Exception) {
+          deferred.reject(action);
+        }
+    }
     assertEquals { expected = {}; actual = done; };
     assertEquals { expected = {reason}; actual = failed.collected; };
   }
-  perform((Deferred<String> deferred) => deferred.reject(reason));
-  perform((Deferred<String> deferred) => deferred.reject(reason).resolve("done"));
-  perform((Deferred<String> deferred) => deferred.reject(reason).reject(Exception()));
+  perform(reason);
+  perform(reason, "done");
+  perform(reason, Exception());
 }
 
 void testThenAfterResolve() {
   LinkedList<String> done = LinkedList<String>();
   ExceptionCollector failed = ExceptionCollector();
-  Deferred<String> deferred = Deferred<String>().resolve("value");
+  value deferred = Deferred<String>();
+  deferred.resolve("value");
   deferred.promise.then_(done.add, failed.add);
   assertEquals { expected = {"value"}; actual = done; };
   assertEquals { expected = {}; actual = failed.collected; };
@@ -65,7 +83,8 @@ void testThenAfterReject() {
   LinkedList<String> done = LinkedList<String>();
   ExceptionCollector failed = ExceptionCollector();
   Exception reason = Exception();
-  Deferred<String> deferred = Deferred<String>().reject(reason);
+  value deferred = Deferred<String>();
+  deferred.reject(reason);
   deferred.promise.then_(done.add, failed.add);
   assertEquals { expected = {}; actual = done; };
   assertEquals { expected = {reason}; actual = failed.collected; };

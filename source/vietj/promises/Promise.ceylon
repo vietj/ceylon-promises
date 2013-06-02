@@ -18,31 +18,26 @@ doc "A promise represents a value that may not be available yet. The primary met
      restricted to a single value."
 by "Julien Viet"
 license "ASL2"
-shared interface Promise<Value> satisfies Term<Value, [Value]> {
+shared abstract class Promise<Value>() satisfies Term<Value, [Value]> {
 
-  doc "Combine the current promise with a provided promise and return an [[And]] object that
-        provides a promise that:
-        - resolves when both the current and the other promise are resolved
-        - rejects when the current or the other promise is rejected
-        
-        The [[And] promise will be
-        - resolved with a tuple of values of the original promises. It is important to notice that
-          tuple elements are in reverse order of the and chain
-        - rejected with the reason of the rejected promise
-        
-        The returned [[And]] object allows for promise chaining as a fluent API:
-            Promise<String> p1 = ...
-            Promise<Integer> p2 = ...
-            Promise<Boolean> p3 = ...
-            p1.and(p2, p3).then_(([Boolean, Integer, String] args) => print(args));
-        "
+  // todo optimize that and instead implement a Promise
+  variable Conjonction<Value, Value, []>? c = null;
+  
+  Conjonction<Value, Value, []> conj() {
+  	if (exists tmp = c) {
+  		return tmp;
+  	} else {
+        value d = Deferred<[]>();
+        d.resolve([]);
+        return c = Conjonction<Value, Value, []>(this, d.promise);
+  	}
+  }
+
   shared actual Term<Value|Other, Tuple<Value|Other, Other, [Value]>> and<Other>(Promise<Other> other) {
-    Promise<[]> p = bilto.deferred.promise;
-    return Conjonction(this, p).and(other);
+    return conj().and(other);
+  }
+  
+  shared actual Promise<[Value]> promise {
+    return conj().promise;
   }
 }
-
-object bilto {
-  shared Deferred<[]> deferred = Deferred<[]>().resolve([]);
-}
-

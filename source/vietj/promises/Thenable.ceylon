@@ -17,7 +17,7 @@
 doc "Thenable provides the base support for promises."
 by "Julien Viet"
 license "ASL2"
-shared interface Thenable<Element, Value> given Value satisfies Element[] {
+shared interface Thenable<Value> given Value satisfies Anything[] {
 	
   M rethrow<M>(Exception e) {
     throw e;
@@ -27,5 +27,9 @@ shared interface Thenable<Element, Value> given Value satisfies Element[] {
   shared formal Promise<Result> then_<Result>(
       Callable<<Result|Promise<Result>>, Value> onFulfilled,
       <Result|Promise<Result>>(Exception) onRejected = rethrow<Result>);
+
+  doc "Returns a promise for this thenable, this should be used when a promise is needed instead
+       of a thenable."
+  shared formal Promise<Value> promise;
 	
 }
