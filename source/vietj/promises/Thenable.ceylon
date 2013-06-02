@@ -13,23 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+doc "Thenable provides the base support for promises."
 by "Julien Viet"
 license "ASL2"
-void run() {
+shared interface Thenable<Element, Value> given Value satisfies Element[] {
 	
-	Deferred<String> d1 = Deferred<String>();
-	Deferred<Integer> d2 = Deferred<Integer>();
-	Deferred<Boolean> d3 = Deferred<Boolean>();
-	Promise<String> p1 = d1.promise;
-	Promise<Integer> p2 = d2.promise;
-	Promise<Boolean> p3 = d3.promise;
+  M rethrow<M>(Exception e) {
+    throw e;
+  }
+
+  doc "The then method from the Promise/A+ specification."
+  shared formal Promise<Result> then_<Result>(
+      Callable<<Result|Promise<Result>>, Value> onFulfilled,
+      <Result|Promise<Result>>(Exception) onRejected = rethrow<Result>);
 	
-	void g(Boolean b, Integer i, String s) {
-		print("Got " + b.string + " " + i.string + " " + s);
-	}
-	p1.and(p2).and(p3).then_(g);
-	
-	d1.resolve("a");
-	d2.resolve(3);
-	d3.resolve(true);
 }

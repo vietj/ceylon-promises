@@ -13,23 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+doc "A term allows a [[Thenable]] to be combined with a promise to form a new term."
 by "Julien Viet"
 license "ASL2"
-void run() {
+shared interface Term<Element, T>
+  satisfies Thenable<Element, T>
+  given T satisfies Element[] {
 	
-	Deferred<String> d1 = Deferred<String>();
-	Deferred<Integer> d2 = Deferred<Integer>();
-	Deferred<Boolean> d3 = Deferred<Boolean>();
-	Promise<String> p1 = d1.promise;
-	Promise<Integer> p2 = d2.promise;
-	Promise<Boolean> p3 = d3.promise;
-	
-	void g(Boolean b, Integer i, String s) {
-		print("Got " + b.string + " " + i.string + " " + s);
-	}
-	p1.and(p2).and(p3).then_(g);
-	
-	d1.resolve("a");
-	d2.resolve(3);
-	d3.resolve(true);
+  shared formal Term<Element|Other, Tuple<Element|Other, Other, T>> and<Other>(Promise<Other> other);
+
 }

@@ -21,7 +21,8 @@ doc "Combines two promises into a new promise.
       "
 by "Julien Viet"
 license "ASL2"
-shared class And<Element, First, Rest>(Promise<First> first, Promise<Rest> rest)
+class Conjonction<Element, First, Rest>(Promise<First> first, Promise<Rest> rest)
+ satisfies Term<Element, Tuple<First|Element, First, Rest>> & Thenable<Element, Tuple<First|Element, First, Rest>>
  given First satisfies Element
  given Rest satisfies Sequential<Element> {
 
@@ -38,7 +39,7 @@ shared class And<Element, First, Rest>(Promise<First> first, Promise<Rest> rest)
       }
     }
   }
-
+  
   void onReject(Exception e) {
     deferred.reject(e);
   }
@@ -56,7 +57,15 @@ shared class And<Element, First, Rest>(Promise<First> first, Promise<Rest> rest)
   first.then_(onFirstFulfilled, onReject);
 
   @doc "Combine the current conjonction with a new promise."
-  shared And<NewFirst|Element, NewFirst, Tuple<First|Element, First, Rest>> and<NewFirst>(Promise<NewFirst> newFirst) {
-    return And(newFirst, promise);
+  shared actual Term<Element|Other, Tuple<Element|Other, Other, Tuple<First|Element, First, Rest>>> and<Other>(Promise<Other> other) {
+    return Conjonction(other, promise);
+  }
+  
+  shared actual Promise<Result> then_<Result>(Callable<<Result|Promise<Result>>, Tuple<First|Element, First, Rest>> onFulfilled, <Result|Promise<Result>>(Exception) onRejected) {
+  	<Result|Promise<Result>> adapter(Tuple<First|Element, First, Rest> args) {
+  		value unflattened = unflatten(onFulfilled);
+  		return unflattened(args);
+  	}
+  	return promise.then_(adapter, onRejected);
   }
 }

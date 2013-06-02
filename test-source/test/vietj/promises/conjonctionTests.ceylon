@@ -31,8 +31,8 @@ void testResolveConjonction() {
   value d3 = Deferred<Boolean>();
   value a = LinkedList<[Boolean, Integer, String]>();
   value b = LinkedList<Exception>();
-  value and = d1.promise.and(d2.promise).and(d3.promise);
-  and.promise.then_(a.add, b.add);
+  value and = d1.promise.and<Integer>(d2.promise).and<Boolean>(d3.promise);
+  and.then_((Boolean b, Integer i, String s) => a.add([b,i,s]), b.add);
   assertEquals { expected = {}; actual = a; };
   assertEquals { expected = {}; actual = b; };
   d2.resolve(3);
@@ -53,8 +53,8 @@ void testRejectConjonction() {
     shared Deferred<Boolean> d3 = Deferred<Boolean>();
     shared LinkedList<[Boolean, Integer, String]> a = LinkedList<[Boolean, Integer, String]>();
     shared LinkedList<Exception> b = LinkedList<Exception>();
-    value and = d1.promise.and(d2.promise).and(d3.promise);
-    and.promise.then_(a.add, b.add);
+    value and = d1.promise.and<Integer>(d2.promise).and<Boolean>(d3.promise);
+    and.then_((Boolean b, Integer i, String s) => a.add([b, i, s]), b.add);
   }
   value e = Exception();
 

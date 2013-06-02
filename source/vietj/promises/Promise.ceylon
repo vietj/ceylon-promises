@@ -14,26 +14,11 @@
  * limitations under the License.
  */
 doc "A promise represents a value that may not be available yet. The primary method for
-      interacting with a promise is its `then` method."
+      interacting with a promise is its `then` method. A promise is a [[Thenable]] element
+     restricted to a single value."
 by "Julien Viet"
 license "ASL2"
-shared interface Promise<Value> {
-
-  M rethrow<M>(Exception e) {
-    throw e;
-  }
-
-  M safeCast<M, N>(N n) {
-    if (is M n) {
-      return n;
-    } else {
-      // todo : this could be done better by returning null instead of changing the control flow of the promise
-      throw Exception("Could not convert type");
-    }
-  }
-  
-  doc "The then method from the Promise/A+ specification."
-  shared formal Promise<Result> then_<Result>(<Result|Promise<Result>>(Value) onFulfilled = safeCast<Result, Value>, <Result|Promise<Result>>(Exception) onRejected = rethrow<Result>);
+shared interface Promise<Value> satisfies Term<Value, [Value]> {
 
   doc "Combine the current promise with a provided promise and return an [[And]] object that
         provides a promise that:
@@ -51,9 +36,9 @@ shared interface Promise<Value> {
             Promise<Boolean> p3 = ...
             p1.and(p2, p3).then_(([Boolean, Integer, String] args) => print(args));
         "
-  shared And<Other|Value,Other,[Value]> and<Other>(Promise<Other> other) {
+  shared actual Term<Value|Other, Tuple<Value|Other, Other, [Value]>> and<Other>(Promise<Other> other) {
     Promise<[]> p = bilto.deferred.promise;
-    return And(this, p).and(other);
+    return Conjonction(this, p).and(other);
   }
 }
 

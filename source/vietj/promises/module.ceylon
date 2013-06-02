@@ -22,9 +22,10 @@ doc "A module that provides Promises/A+ semantics adapted to the Ceylon language
       The modules provides:
 
       - the [[Promise]] interface conforming to the specification.
+      - The [[Thenable]] interface forming the ground of promises, implemented primarily by the [[Promise]] interface
       - a [[Deferred]] type as implementation of the [[Promise]] interface.
       - the [[Status]] enumerated instance with the  [[pending]], [[fulfilled]] and [[rejected]] instances.
-      - the [[And]] conjonction for combining promises into a conjonctive promise.
+      - the [[Term]] interface for combining promises into a conjonction promise.
 
       Differences with the original specification:
 
