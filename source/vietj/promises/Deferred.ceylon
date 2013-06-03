@@ -1,3 +1,5 @@
+import java.util.concurrent.locks { ReentrantLock }
+
 /*
  * Copyright 2013 Julien Viet
  *
@@ -24,6 +26,7 @@ by "Julien Viet"
 license "ASL2"
 shared class Deferred<Value>() {
 
+  ReentrantLock lock = ReentrantLock();
   variable Promise<Value>? state = null;
   variable Status current = pending;
   variable [Anything(Value),Anything(Exception)][] listeners = {};
@@ -64,12 +67,20 @@ shared class Deferred<Value>() {
         callback(onRejected, reason);
       }
 
-      if (exists tmp = state) {
-        tmp.then_(onFulfilledCallback, onRejectedCallback);
-      } else {
-        listeners = listeners.withTrailing([onFulfilledCallback, onRejectedCallback]);
+      // Update under lock
+      Promise<Value> p;
+      lock.lock();
+      try {
+        if (exists tmp = state) {
+          p = tmp;
+        } else {
+          listeners = listeners.withTrailing([onFulfilledCallback, onRejectedCallback]);
+          return deferred.promise;
+        }
+      } finally {
+        lock.unlock();
       }
-
+      p.then_(onFulfilledCallback, onRejectedCallback);
       return deferred.promise;
     }
   }
@@ -109,12 +120,19 @@ shared class Deferred<Value>() {
   }
 
   void set(Promise<Value> state) {
-    if (exists tmp = this.state) {
-    } else {
-      this.state = state;
-      for (listener in listeners) {
-        state.then_(listener[0], listener[1]);
+    // Update under lock
+	lock.lock();
+	try {
+      if (exists tmp = this.state) {
+        return;
+      } else {
+        this.state = state;
       }
+	} finally {
+	  lock.unlock();
+	}
+    for (listener in listeners) {
+      state.then_(listener[0], listener[1]);
     }
   }
 
