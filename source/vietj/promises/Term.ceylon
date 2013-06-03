@@ -25,7 +25,7 @@ shared interface Term<Element, T>
         - resolves when both the current thenable and the other promise are resolved
         - rejects when the current thenable or the other promise is rejected
         
-        The [[Term] promise will be
+        The [[Term]] promise will be
         - resolved with a tuple of values of the original promises. It is important to notice that
           tuple elements are in reverse order of the and chain
         - rejected with the reason of the rejected promise

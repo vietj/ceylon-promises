@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-doc "The deferred class is the primary implementation of the [[Promise] interface.
+doc "The deferred class is the primary implementation of the [[Promise]] interface.
       
       The promise is accessible using the `promise` attribute of the deferred.
       
