@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-doc "Thenable provides the base support for promises. This interface satisfies the [[Promised]] interface, to be used
-     when a promise is needed instead of a thenable"
 by "Julien Viet"
 license "ASL2"
-shared interface Thenable<out Value> satisfies Promised<Value> given Value satisfies Anything[] {
-	
-  M rethrow<M>(Exception e) {
-    throw e;
-  }
+doc "Something that can through a transition and is meant to be be resolved or rejected"
+shared interface Transitionnable<in Value> {
 
-  doc "The then method from the Promise/A+ specification."
-  shared formal Promise<Result> then_<Result>(
-      Callable<<Result|Promise<Result>>, Value> onFulfilled,
-      <Result|Promise<Result>>(Exception) onRejected = rethrow<Result>);
+  doc "Resolves the promise with a value or a promise to the value."
+  shared formal void resolve(<Value|Promise<Value>> val);
+
+  doc "Rejects the promise with a reason."
+  shared formal void reject(Exception reason);
 
 }

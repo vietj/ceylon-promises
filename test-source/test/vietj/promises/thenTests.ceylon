@@ -95,7 +95,7 @@ void testReturnedPromiseMustBeFulfilledWithSameValueWhenOnFulfilledIsNotAFunctio
 void testReturnedPromiseMustBeRejectedWithSameValueWhenOnRejectedIsNotAFunction() {
   LinkedList<Exception> a = LinkedList<Exception>();
   Deferred<String> d = Deferred<String>();
-  d.promise.then_((String s) => s).then_{ onFulfilled = (String s) => print(s) ; onRejected = a.add; };
+  d.promise.then_((String s) => s).then_((String s) => print(s),a.add);
   Exception e = Exception();
   d.reject(e);
   assertEquals { expected = {e}; actual = a; };

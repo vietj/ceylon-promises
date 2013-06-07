@@ -17,7 +17,7 @@
 doc "A term allows a [[Thenable]] to be combined with a promise to form a new term."
 by "Julien Viet"
 license "ASL2"
-shared interface Term<Element, T>
+shared interface Term<out Element, out T>
   satisfies Thenable<T>
   given T satisfies Element[] {
 	

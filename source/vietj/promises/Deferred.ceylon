@@ -1,5 +1,3 @@
-import java.util.concurrent.locks { ReentrantLock }
-
 /*
  * Copyright 2013 Julien Viet
  *
@@ -15,7 +13,10 @@ import java.util.concurrent.locks { ReentrantLock }
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-doc "The deferred class is the primary implementation of the [[Promise] interface.
+
+import java.util.concurrent.locks { ReentrantLock }
+
+doc "The deferred class is the primary implementation of the [[Promise]] interface.
       
       The promise is accessible using the `promise` attribute of the deferred.
       
@@ -24,7 +25,7 @@ doc "The deferred class is the primary implementation of the [[Promise] interfac
       on a promise."
 by "Julien Viet"
 license "ASL2"
-shared class Deferred<Value>() {
+shared class Deferred<Value>() satisfies Transitionnable<Value> & Promised<Value> {
 
   ReentrantLock lock = ReentrantLock();
   variable Promise<Value>? state = null;
@@ -46,7 +47,7 @@ shared class Deferred<Value>() {
   shared Boolean isPending => status == pending;
 
   doc "The promise of this deferred."
-  shared object promise extends Promise<Value>() {
+  shared actual object promise extends Promise<Value>() {
 
     shared actual Promise<Result> then_<Result>(<Result|Promise<Result>>(Value) onFulfilled, <Result|Promise<Result>>(Exception) onRejected) {
       Deferred<Result> deferred = Deferred<Result>();
@@ -136,14 +137,12 @@ shared class Deferred<Value>() {
     }
   }
 
-  doc "Resolve the promise with a value or a promise to the value."
-  shared void resolve(Value|Promise<Value> val) {
+  shared actual void resolve(Value|Promise<Value> val) {
     Promise<Value> adapted = adaptValue(val);
     set(adapted);
   }
 
-  doc "Reject the promise with a reason or a promise to the reason."
-  shared void reject(Exception reason) {
+  shared actual void reject(Exception reason) {
     Promise<Value> adapted = adaptReason<Value>(reason);
     set(adapted);
   }

@@ -18,11 +18,6 @@ import java.util { BitSet }
 by "Julien Viet"
 license "ASL2"
 void run() {
-
-	value d = Deferred<BitSet>();
-	BitSet bs = BitSet();
-	d.resolve(bs);
-	
 		
 	
 }

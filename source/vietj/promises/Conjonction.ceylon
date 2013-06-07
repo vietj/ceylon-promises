@@ -21,7 +21,7 @@ doc "Combines two promises into a new promise.
       "
 by "Julien Viet"
 license "ASL2"
-class Conjonction<Element, First, Rest>(Promise<First> first, Promise<Rest> rest)
+class Conjonction<out Element, out First, Rest>(Promise<First> first, Promise<Rest> rest)
  satisfies Term<Element, Tuple<First|Element, First, Rest>>
  given First satisfies Element
  given Rest satisfies Sequential<Element> {

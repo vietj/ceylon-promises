@@ -29,9 +29,10 @@ void run() {
 
   suite("vietj.promises", "Deferred" -> deferredTests);
   suite("vietj.promises", "Promise" -> promiseTests);
-  suite("vietj.then", "Then method" -> thenTests);
-  suite("vietj.resolution", "Resolution Procedure" -> resolutionTests);
-  suite("vietj.conjonction", "Conjonction" -> conjonctionTests);
+  suite("vietj.promises", "Then method" -> thenTests);
+  suite("vietj.promises", "Resolution Procedure" -> resolutionTests);
+  suite("vietj.promises", "Conjonction" -> conjonctionTests);
+  suite("vietj.promises", "Variance" -> varianceTests);
 
   useCases();
 

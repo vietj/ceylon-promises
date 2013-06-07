@@ -18,7 +18,7 @@ doc "A promise represents a value that may not be available yet. The primary met
      restricted to a single value."
 by "Julien Viet"
 license "ASL2"
-shared abstract class Promise<Value>() satisfies Term<Value, [Value]> {
+shared abstract class Promise<out Value>() satisfies Term<Value, [Value]> {
 
   // todo optimize that and instead implement a Promise
   variable Conjonction<Value, Value, []>? c = null;
