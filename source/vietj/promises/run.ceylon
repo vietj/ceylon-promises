@@ -19,7 +19,7 @@ license "ASL2"
 void run() {
 
   Deferred<String> d = Deferred<String>();
-  d.promise.then_((String s) => print(s), () => print("foo"));
+  d.promise.always(() => print("done"));
   d.reject(Exception());
 	
 }

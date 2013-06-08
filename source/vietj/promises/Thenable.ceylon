@@ -29,4 +29,12 @@ shared interface Thenable<out Value> satisfies Promised<Value> given Value satis
       <Callable<<Result|Promise<Result>>, Value>|Callable<<Result|Promise<Result>>, []>> onFulfilled,
       <<Result|Promise<Result>>(Exception)|<Result|Promise<Result>>()> onRejected = rethrow<Result>);
 
+  doc "Analog to Q finally (except that it does not consider the callback might return a promise"
+  shared void always(Callable<Anything, Value|[Exception]>|Callable<Anything, []> callback) {
+	if (is Callable<Anything, Value|[Exception]> callback) {
+	  then_(callback, callback);
+	} else if (is Callable<Anything, []> callback) {
+	  then_(callback, callback);
+	}
+  }
 }
