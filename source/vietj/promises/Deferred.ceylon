@@ -18,11 +18,11 @@ import java.util.concurrent.locks { ReentrantLock }
 
 doc "The deferred class is the primary implementation of the [[Promise]] interface.
       
-      The promise is accessible using the `promise` attribute of the deferred.
+     The promise is accessible using the `promise` attribute of the deferred.
       
-      The deferred can either be resolved or rejected via the `resolve` or `reject` methods. Both
-      methods accept an argument or a promise to the argument, allowing the deferred to react
-      on a promise."
+     The deferred can either be resolved or rejected via the `resolve` or `reject` methods. Both
+     methods accept an argument or a promise to the argument, allowing the deferred to react
+     on a promise."
 by "Julien Viet"
 license "ASL2"
 shared class Deferred<Value>() satisfies Transitionnable<Value> & Promised<Value> {

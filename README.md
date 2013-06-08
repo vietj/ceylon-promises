@@ -11,7 +11,7 @@ The modules provides:
 - the Promise interface conforming to the specification.
 - a Deferred type as implementation of the Promise interface.
 - the Status enumerated instance with the pending, fulfilled and rejected instances.
-- the [[And]] conjonction for combining promises into a conjonctive promise.
+- the And conjonction for combining promises into a conjonctive promise.
 
 Differences with the original specification:
 
