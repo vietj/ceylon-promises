@@ -149,7 +149,7 @@ void useCases() {
       a = i;
       return mine.promise;
     }
-    Promise<String> p = d.promise.then_<String>(f);
+    Promise<String> p = d.promise.then__(f);
    variable String? result = null;
     void g(String s) {
       result = s;

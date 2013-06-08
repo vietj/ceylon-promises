@@ -49,7 +49,7 @@ shared class Deferred<Value>() satisfies Transitionnable<Value> & Promised<Value
   doc "The promise of this deferred."
   shared actual object promise extends Promise<Value>() {
 
-    shared actual Promise<Result> then_<Result>(
+    shared actual Promise<Result> then___<Result>(
       <<Result|Promise<Result>>(Value)|<Result|Promise<Result>>()> onFulfilled, 
       <<Result|Promise<Result>>(Exception)|<Result|Promise<Result>>()> onRejected) {
       Deferred<Result> deferred = Deferred<Result>();
@@ -91,7 +91,7 @@ shared class Deferred<Value>() satisfies Transitionnable<Value> & Promised<Value
   Promise<T> adaptValue<T>(T|Promise<T> val) {
     if (is T val) {
       object adapter extends Promise<T>() {
-        shared actual Promise<Result> then_<Result>(
+        shared actual Promise<Result> then___<Result>(
           <<Result|Promise<Result>>(T)|<Result|Promise<Result>>()> onFulfilled,
           <<Result|Promise<Result>>(Exception)|<Result|Promise<Result>>()> onRejected) {
           try {
@@ -112,7 +112,7 @@ shared class Deferred<Value>() satisfies Transitionnable<Value> & Promised<Value
 
   Promise<T> adaptReason<T>(Exception reason) {
     object adapted extends Promise<T>() {
-      shared actual Promise<Result> then_<Result>(
+      shared actual Promise<Result> then___<Result>(
         <<Result|Promise<Result>>(T)|<Result|Promise<Result>>()> onFulfilled,
         <<Result|Promise<Result>>(Exception)|<Result|Promise<Result>>()> onRejected) {
         try {
