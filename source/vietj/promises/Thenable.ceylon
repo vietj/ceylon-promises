@@ -25,8 +25,8 @@ shared interface Thenable<out Value> satisfies Promised<Value> given Value satis
   }
 
   doc "The then method from the Promise/A+ specification."
-  shared formal Promise<Result> then_<Result>(
-      Callable<<Result|Promise<Result>>, Value> onFulfilled,
-      <Result|Promise<Result>>(Exception) onRejected = rethrow<Result>);
+  shared formal Promise<Result> then_<Result, Args>(
+      Callable<<Result|Promise<Result>>, Args> onFulfilled,
+      <Result|Promise<Result>>(Exception) onRejected = rethrow<Result>) given Args satisfies Anything[];
 
 }

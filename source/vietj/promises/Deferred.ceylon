@@ -49,13 +49,15 @@ shared class Deferred<Value>() satisfies Transitionnable<Value> & Promised<Value
   doc "The promise of this deferred."
   shared actual object promise extends Promise<Value>() {
 
-    shared actual Promise<Result> then_<Result>(<Result|Promise<Result>>(Value) onFulfilled, <Result|Promise<Result>>(Exception) onRejected) {
+    shared actual Promise<Result> then_<Result, Args>(
+      Callable<Result|Promise<Result>, Args> onFulfilled,
+      <Result|Promise<Result>>(Exception) onRejected) given Args satisfies Anything[] {
       Deferred<Result> deferred = Deferred<Result>();
 
-      void callback<T>(<Result|Promise<Result>>(T) on, T val) {
+      void callback<Args, T>(Callable<Result|Promise<Result>, Args> on, T val) given Args satisfies Anything[] {
         try {
           Result|Promise<Result> result = on(val);
-          deferred.resolve(result);
+          // deferred.resolve(result);
         } catch(Exception e) {
           deferred.reject(e);
         }
@@ -89,10 +91,13 @@ shared class Deferred<Value>() satisfies Transitionnable<Value> & Promised<Value
   Promise<T> adaptValue<T>(T|Promise<T> arg) {
     if (is T arg) {
       object adapter extends Promise<T>() {
-        shared actual Promise<Result> then_<Result>(<Result|Promise<Result>>(T) onFulfilled, <Result|Promise<Result>>(Exception) onRejected) {
+        shared actual Promise<Result> then_<Result, Args>(
+          Callable<Result|Promise<Result>, Args> onFulfilled,
+          <Result|Promise<Result>>(Exception) onRejected) given Args satisfies Anything[] {
           try {
-            Result|Promise<Result> result = onFulfilled(arg);
-            return adaptValue(result);
+            // Result|Promise<Result> result = onFulfilled(arg);
+            //return adaptValue(result);
+            throw Exception();
           } catch(Exception e) {
             return adaptReason<Result>(e);
           }
@@ -108,7 +113,9 @@ shared class Deferred<Value>() satisfies Transitionnable<Value> & Promised<Value
 
   Promise<T> adaptReason<T>(Exception e) {
     object adapted extends Promise<T>() {
-      shared actual Promise<Result> then_<Result>(<Result|Promise<Result>>(T) onFulfilled, <Result|Promise<Result>>(Exception) onRejected) {
+      shared actual Promise<Result> then_<Result, Args>(
+        Callable<Result|Promise<Result>, Args> onFulfilled,
+        <Result|Promise<Result>>(Exception) onRejected) given Args satisfies Anything[] {
         try {
           <Result|Promise<Result>> result = onRejected(e);
           return adaptValue<Result>(result);

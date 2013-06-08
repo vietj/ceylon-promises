@@ -60,10 +60,13 @@ class Conjonction<out Element, out First, Rest>(Promise<First> first, Promise<Re
     return Conjonction(other, promise);
   }
   
-  shared actual Promise<Result> then_<Result>(Callable<<Result|Promise<Result>>, Tuple<First|Element, First, Rest>> onFulfilled, <Result|Promise<Result>>(Exception) onRejected) {
+  shared actual Promise<Result> then_<Result, Args>(
+    Callable<<Result|Promise<Result>>, Args> onFulfilled,
+    <Result|Promise<Result>>(Exception) onRejected) given Args satisfies Anything[] {
   	<Result|Promise<Result>> adapter(Tuple<First|Element, First, Rest> args) {
   		value unflattened = unflatten(onFulfilled);
-  		return unflattened(args);
+  		// return unflattened(args);
+  		throw Exception();
   	}
   	return promise.then_(adapter, onRejected);
   }
