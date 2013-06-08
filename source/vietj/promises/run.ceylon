@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import java.util { BitSet } 
  
 by "Julien Viet"
 license "ASL2"
 void run() {
-		
+
+  Deferred<String> d = Deferred<String>();
+  d.promise.then_((String s) => print(s), () => print("foo"));
+  d.reject(Exception());
 	
 }

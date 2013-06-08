@@ -49,12 +49,14 @@ shared class Deferred<Value>() satisfies Transitionnable<Value> & Promised<Value
   doc "The promise of this deferred."
   shared actual object promise extends Promise<Value>() {
 
-    shared actual Promise<Result> then_<Result>(<Result|Promise<Result>>(Value) onFulfilled, <Result|Promise<Result>>(Exception) onRejected) {
+    shared actual Promise<Result> then_<Result>(
+      <<Result|Promise<Result>>(Value)|<Result|Promise<Result>>()> onFulfilled, 
+      <<Result|Promise<Result>>(Exception)|<Result|Promise<Result>>()> onRejected) {
       Deferred<Result> deferred = Deferred<Result>();
 
-      void callback<T>(<Result|Promise<Result>>(T) on, T val) {
+      void callback<T>(<<Result|Promise<Result>>(T)|<Result|Promise<Result>>()> on, T val) {
         try {
-          Result|Promise<Result> result = on(val);
+          Result|Promise<Result> result = dispatch(on, val);
           deferred.resolve(result);
         } catch(Exception e) {
           deferred.reject(e);
@@ -86,12 +88,14 @@ shared class Deferred<Value>() satisfies Transitionnable<Value> & Promised<Value
     }
   }
 
-  Promise<T> adaptValue<T>(T|Promise<T> arg) {
-    if (is T arg) {
+  Promise<T> adaptValue<T>(T|Promise<T> val) {
+    if (is T val) {
       object adapter extends Promise<T>() {
-        shared actual Promise<Result> then_<Result>(<Result|Promise<Result>>(T) onFulfilled, <Result|Promise<Result>>(Exception) onRejected) {
+        shared actual Promise<Result> then_<Result>(
+          <<Result|Promise<Result>>(T)|<Result|Promise<Result>>()> onFulfilled,
+          <<Result|Promise<Result>>(Exception)|<Result|Promise<Result>>()> onRejected) {
           try {
-            Result|Promise<Result> result = onFulfilled(arg);
+            Result|Promise<Result> result = dispatch(onFulfilled, val);
             return adaptValue(result);
           } catch(Exception e) {
             return adaptReason<Result>(e);
@@ -99,18 +103,20 @@ shared class Deferred<Value>() satisfies Transitionnable<Value> & Promised<Value
         }
       }
       return adapter;
-    } else if (is Promise<T> arg) {
-      return arg;
+    } else if (is Promise<T> val) {
+      return val;
     } else {
       throw Exception("not possible");
     }
   }
 
-  Promise<T> adaptReason<T>(Exception e) {
+  Promise<T> adaptReason<T>(Exception reason) {
     object adapted extends Promise<T>() {
-      shared actual Promise<Result> then_<Result>(<Result|Promise<Result>>(T) onFulfilled, <Result|Promise<Result>>(Exception) onRejected) {
+      shared actual Promise<Result> then_<Result>(
+        <<Result|Promise<Result>>(T)|<Result|Promise<Result>>()> onFulfilled,
+        <<Result|Promise<Result>>(Exception)|<Result|Promise<Result>>()> onRejected) {
         try {
-          <Result|Promise<Result>> result = onRejected(e);
+          <Result|Promise<Result>> result = dispatch(onRejected, reason);
           return adaptValue<Result>(result);
         } catch(Exception e) {
           return adaptReason<Result>(e);

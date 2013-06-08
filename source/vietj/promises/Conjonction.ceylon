@@ -60,12 +60,20 @@ class Conjonction<out Element, out First, Rest>(Promise<First> first, Promise<Re
     return Conjonction(other, promise);
   }
   
-  shared actual Promise<Result> then_<Result>(Callable<<Result|Promise<Result>>, Tuple<First|Element, First, Rest>> onFulfilled, <Result|Promise<Result>>(Exception) onRejected) {
-  	<Result|Promise<Result>> adapter(Tuple<First|Element, First, Rest> args) {
-  		value unflattened = unflatten(onFulfilled);
-  		return unflattened(args);
+  shared actual Promise<Result> then_<Result>(
+    <Callable<<Result|Promise<Result>>, Tuple<First|Element, First, Rest>>|Callable<<Result|Promise<Result>>, []>> onFulfilled,
+    <<Result|Promise<Result>>(Exception)|<Result|Promise<Result>>()> onRejected) {
+  	if (is Callable<<Result|Promise<Result>>, Tuple<First|Element, First, Rest>> onFulfilled) {
+      <Result|Promise<Result>> adapter(Tuple<First|Element, First, Rest> args) {
+   	    value unflattened = unflatten(onFulfilled);
+  	    return unflattened(args);
+  	  }
+  	  return promise.then_(adapter, onRejected);
+  	} else if (is Callable<<Result|Promise<Result>>, []> onFulfilled) {
+  	  return promise.then_(onFulfilled, onRejected);
+  	} else {
+  	  throw Exception("Should not be here");
   	}
-  	return promise.then_(adapter, onRejected);
   }
   
 }

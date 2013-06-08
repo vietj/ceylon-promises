@@ -33,6 +33,7 @@ void run() {
   suite("vietj.promises", "Resolution Procedure" -> resolutionTests);
   suite("vietj.promises", "Conjonction" -> conjonctionTests);
   suite("vietj.promises", "Variance" -> varianceTests);
+  suite("vietj.promises", "Default callable parameter" -> defaultCallableParameterTests);
 
   useCases();
 
