@@ -63,6 +63,7 @@ doc "A module that provides Promises/A+ semantics adapted to the Ceylon language
      - `resolve`: resolves the promise with a *value*
      - `reject`: rejects the promise with an *reason* of type `Exception`
      
+     For example:
      
          value deferred = Deferred<String>();
          void doOperation() {
