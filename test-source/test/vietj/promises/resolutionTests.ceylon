@@ -52,7 +52,8 @@ void testOnFulfilledAdoptPromiseThatResolves() {
     test.d1Reasons.add(reason);
     return test.d2.promise;
   }
-  test.d1.promise.then__(f, g).then_(test.d2Values.add, test.d2Reasons.add);
+  Promise<Integer> promise = test.d1.promise;
+  promise.then__(f, g).then_(test.d2Values.add, test.d2Reasons.add);
   test.check({},{},{},{});
   test.d1.resolve(3);
   test.check({3},{},{},{});
@@ -70,7 +71,8 @@ void testOnFulfilledAdoptPromiseThatRejects() {
     test.d1Reasons.add(reason);
     return test.d2.promise;
   }
-  test.d1.promise.then__(f, g).then_(test.d2Values.add, test.d2Reasons.add);
+  Promise<Integer> promise = test.d1.promise;
+  promise.then__(f, g).then_(test.d2Values.add, test.d2Reasons.add);
   test.check({},{},{},{});
   test.d1.resolve(3);
   test.check({3},{},{},{});
@@ -88,7 +90,8 @@ void testOnRejectedAdoptPromiseThatResolves() {
     test.d1Reasons.add(reason);
     return test.d2.promise;
   }
-  test.d1.promise.then__(f, g).then_(test.d2Values.add, test.d2Reasons.add);
+  Promise<Integer> promise = test.d1.promise;
+  promise.then__(f, g).then_(test.d2Values.add, test.d2Reasons.add);
   test.check({},{},{},{});
   Exception e = Exception();
   test.d1.reject(e);
@@ -106,7 +109,8 @@ void testOnRejectedAdoptPromiseThatRejects() {
     test.d1Reasons.add(reason);
     return test.d2.promise;
   }
-  test.d1.promise.then__(f, g).then_(test.d2Values.add, test.d2Reasons.add);
+  Promise<Integer> promise = test.d1.promise;
+  promise.then__(f, g).then_(test.d2Values.add, test.d2Reasons.add);
   test.check({},{},{},{});
   Exception e1 = Exception();
   test.d1.reject(e1);

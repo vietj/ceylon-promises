@@ -23,7 +23,8 @@ void testResolve() {
     LinkedList<String> done = LinkedList<String>();
     ExceptionCollector failed = ExceptionCollector();
     Deferred<String> deferred = Deferred<String>();
-    deferred.promise.then_(done.add, failed.add);
+    Promise<String> promise = deferred.promise;
+    promise.then_(done.add, failed.add);
     assertEquals { expected = {}; actual = done; };
     assertEquals { expected = {}; actual = failed.collected; };
     for (action in actions) {
@@ -49,7 +50,8 @@ void testReject() {
     LinkedList<String> done = LinkedList<String>();
     ExceptionCollector failed = ExceptionCollector();
     Deferred<String> deferred = Deferred<String>();
-    deferred.promise.then_(done.add, failed.add);
+    Promise<String> promise = deferred.promise;
+    promise.then_(done.add, failed.add);
     assertEquals { expected = {}; actual = done; };
     assertEquals { expected = {}; actual = failed.collected; };
     for (action in actions) {
@@ -74,7 +76,8 @@ void testThenAfterResolve() {
   ExceptionCollector failed = ExceptionCollector();
   value deferred = Deferred<String>();
   deferred.resolve("value");
-  deferred.promise.then_(done.add, failed.add);
+  Promise<String> promise = deferred.promise;
+  promise.then_(done.add, failed.add);
   assertEquals { expected = {"value"}; actual = done; };
   assertEquals { expected = {}; actual = failed.collected; };
 }
@@ -85,7 +88,8 @@ void testThenAfterReject() {
   Exception reason = Exception();
   value deferred = Deferred<String>();
   deferred.reject(reason);
-  deferred.promise.then_(done.add, failed.add);
+  Promise<String> promise = deferred.promise;
+  promise.then_(done.add, failed.add);
   assertEquals { expected = {}; actual = done; };
   assertEquals { expected = {reason}; actual = failed.collected; };
 }

@@ -24,7 +24,8 @@ void testDefaultReason() {
   void foo(Exception arg = Exception()) {
   	done.add(arg);
   }
-  d.promise.then_((String s) => print(s), foo);
+  Promise<String> p = d.promise;
+  p.then_((String s) => print(s), foo);
   Exception reason = Exception();
   d.reject(reason);
   assertEquals({reason}, done);

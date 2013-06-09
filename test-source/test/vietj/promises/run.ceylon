@@ -75,7 +75,8 @@ void useCases() {
       found = r;
       return r;
     }
-    d.promise.then_(done.add, e);
+    Promise<Integer> promise = d.promise;
+    promise.then_(done.add, e);
     Exception ee = Exception();
     d.reject(ee);
     assertEquals { expected = ee; actual = found; };
@@ -95,7 +96,8 @@ void useCases() {
     Integer foo(Integer i) {
       throw e;
     }
-    d.promise.then_(foo).then_(done.add, cc);
+    Promise<Integer> promise = d.promise;
+    promise.then_(foo).then_(done.add, cc);
     d.resolve(3);
 
     assertEquals { expected = e; actual = found; };
@@ -114,7 +116,8 @@ void useCases() {
       exc.add(e);
       return 4;
     }
-    deferred.promise.then_(foo).then_((Integer i) => i, bar).then_(collected.add);
+    Promise<Integer> promise = deferred.promise;
+    promise.then_(foo).then_((Integer i) => i, bar).then_(collected.add);
     deferred.resolve(3);
     assertEquals { expected = {4}; actual = collected; };
     assertEquals { expected = {e}; actual = exc; };
@@ -127,10 +130,12 @@ void useCases() {
       i = integer;
       return integer.string;
     }
-    Promise<String> p = di.promise.then_(f);
+    Promise<Integer> promise = di.promise;
+    Promise<String> p = promise.then_(f);
     variable String? s = null;
     Deferred<String> d = Deferred<String>();
-    d.promise.then_((String string) => s = string);
+    Promise<String> promise2 = d.promise;
+    promise2.then_((String string) => s = string);
     assertEquals { expected = null; actual = i; };
     assertEquals { expected = null; actual = s; };
     d.resolve(p);
@@ -149,8 +154,9 @@ void useCases() {
       a = i;
       return mine.promise;
     }
-    Promise<String> p = d.promise.then__(f);
-   variable String? result = null;
+    Promise<Integer> promise = d.promise;
+    Promise<String> p = promise.then__(f);
+    variable String? result = null;
     void g(String s) {
       result = s;
     }

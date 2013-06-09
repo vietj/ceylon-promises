@@ -23,7 +23,8 @@ void testFulfilledFulfillmentHandlerReturnsValue() {
   LinkedList<String> done = LinkedList<String>();
   ExceptionCollector failed = ExceptionCollector();
   Deferred<Integer> deferred = Deferred<Integer>();
-  deferred.promise.then_(toString).then_(done.add, failed.add);
+  Promise<Integer> promise = deferred.promise;
+  promise.then_(toString).then_(done.add, failed.add);
   deferred.resolve(3);
   assertEquals { expected = {"3"}; actual = done; };
   assertEquals { expected = {}; actual = failed.collected; };
@@ -33,7 +34,8 @@ void testRejectedRejectionHandlerReturnsAValue() {
   LinkedList<String> done = LinkedList<String>();
   ExceptionCollector failed = ExceptionCollector();
   Deferred<Integer> deferred = Deferred<Integer>();
-  deferred.promise.then_(toString, (Exception e) => "3").then_(done.add, failed.add);
+  Promise<Integer> promise = deferred.promise;
+  promise.then_(toString, (Exception e) => "3").then_(done.add, failed.add);
   deferred.reject(Exception());
   assertEquals { expected = {"3"}; actual = done; };
   assertEquals { expected = {}; actual = failed.collected; };
