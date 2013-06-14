@@ -40,7 +40,7 @@ void testRejectedRejectionHandlerReturnsAValue() {
   assertEquals { expected = {"3"}; actual = done; };
   assertEquals { expected = {}; actual = failed.collected; };
 }
-
+/*
 void testFulfillementState() {
   Deferred<Integer> deferred = Deferred<Integer>();
   assertEquals { expected = pending; actual = deferred.status; };
@@ -55,10 +55,10 @@ void testRejectedState() {
   deferred.reject(e);
   assertEquals { expected = rejected; actual = deferred.status; };
 }
-
+*/
 shared void promiseTests() {
-  testFulfillementState();
-  testRejectedState();
+//  testFulfillementState();
+//  testRejectedState();
   testFulfilledFulfillmentHandlerReturnsValue();
   testRejectedRejectionHandlerReturnsAValue();
 }

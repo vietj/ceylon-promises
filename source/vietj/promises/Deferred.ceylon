@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import java.util.concurrent.locks { ReentrantLock }
+import java.util.concurrent.atomic { AtomicReference }
 
 doc "The deferred class is the primary implementation of the [[Promise]] interface.
       
@@ -25,35 +25,35 @@ doc "The deferred class is the primary implementation of the [[Promise]] interfa
      on a promise."
 by "Julien Viet"
 license "ASL2"
+
 shared class Deferred<Value>() satisfies Transitionnable<Value> & Promised<Value> {
-
-  ReentrantLock lock = ReentrantLock();
-  variable Promise<Value>? state = null;
-  variable Status current = pending;
-  variable [Anything(Value),Anything(Exception)][] listeners = {};
   
-  listeners = listeners.withTrailing([(Value v) => current = fulfilled, (Exception e) => current = rejected]);
+  abstract class State() of ListenerState | PromiseState {
+  }
 
-  doc "Return the current deferred status."
-  shared Status status => current;
+  class ListenerState(Anything(Value) onFulfilled, Anything(Exception) onRejected, ListenerState? previous = null) extends State() {
+	shared void update(Promise<Value> promise) {
+	  if (exists previous) {
+	  	previous.update(promise);
+	  }
+	  promise.then_(onFulfilled, onRejected);
+	}
+  }
+   
+  class PromiseState(shared Promise<Value> promise) extends State() {
+  }
 
-  doc "Return true if the current promise is fulfilled."
-  shared Boolean isFulfilled => status == fulfilled;
-
-  doc "Return true if the current promise is rejected."
-  shared Boolean isRejected => status == rejected;
-
-  doc "Return true if the current promise is fulfilled."
-  shared Boolean isPending => status == pending;
-
+  doc "The current state"
+  AtomicReference<State?> state = AtomicReference<State?>(null);
+  
   doc "The promise of this deferred."
   shared actual object promise extends Promise<Value>() {
 
     shared actual Promise<Result> then___<Result>(
       <<Result|Promise<Result>>(Value)|<Result|Promise<Result>>()> onFulfilled, 
       <<Result|Promise<Result>>(Exception)|<Result|Promise<Result>>()> onRejected) {
-      Deferred<Result> deferred = Deferred<Result>();
 
+      Deferred<Result> deferred = Deferred<Result>();
       void callback<T>(<<Result|Promise<Result>>(T)|<Result|Promise<Result>>()> on, T val) {
         try {
           Result|Promise<Result> result = dispatch(on, val);
@@ -70,20 +70,27 @@ shared class Deferred<Value>() satisfies Transitionnable<Value> & Promised<Value
         callback(onRejected, reason);
       }
 
-      // Update under lock
-      Promise<Value> p;
-      lock.lock();
-      try {
-        if (exists tmp = state) {
-          p = tmp;
-        } else {
-          listeners = listeners.withTrailing([onFulfilledCallback, onRejectedCallback]);
-          return deferred.promise;
-        }
-      } finally {
-        lock.unlock();
+      // 
+      while (true) {
+	    State? current = state.get();
+	    switch (current)
+	      case (is Null) {
+	        State next = ListenerState(onFulfilledCallback, onRejectedCallback);
+	        if (state.compareAndSet(current, next)) {
+	          break;
+	        }
+	      }
+	      case (is ListenerState) {
+	        State next = ListenerState(onFulfilledCallback, onRejectedCallback, current);
+	        if (state.compareAndSet(current, next)) {
+	          break;
+	        }
+	      }
+	      case (is PromiseState) {
+	        current.promise.then_(onFulfilledCallback, onRejectedCallback);
+	        break;
+	      }
       }
-      p.then_(onFulfilledCallback, onRejectedCallback);
       return deferred.promise;
     }
   }
@@ -126,30 +133,36 @@ shared class Deferred<Value>() satisfies Transitionnable<Value> & Promised<Value
     return adapted;
   }
 
-  void set(Promise<Value> state) {
-    // Update under lock
-	lock.lock();
-	try {
-      if (exists tmp = this.state) {
-        return;
-      } else {
-        this.state = state;
-      }
-	} finally {
-	  lock.unlock();
-	}
-    for (listener in listeners) {
-      state.then_(listener[0], listener[1]);
+  void update(Promise<Value> promise) {
+    while (true) {
+	  State? current = state.get();    
+	  switch (current) 
+	    case (is Null) {
+          PromiseState next = PromiseState(promise);	
+          if (state.compareAndSet(current, next)) {
+            break;  	
+          }
+	    }
+	    case (is ListenerState) {
+          PromiseState next = PromiseState(promise);	
+          if (state.compareAndSet(current, next)) {
+            current.update(promise);
+            break;  	
+          }
+	    }
+	    case (is PromiseState) {
+	      break;
+	    }
     }
   }
 
   shared actual void resolve(Value|Promise<Value> val) {
     Promise<Value> adapted = adaptValue(val);
-    set(adapted);
+    update(adapted);
   }
 
   shared actual void reject(Exception reason) {
     Promise<Value> adapted = adaptReason<Value>(reason);
-    set(adapted);
+    update(adapted);
   }
 }

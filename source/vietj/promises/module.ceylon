@@ -134,6 +134,11 @@ doc "A module that provides Promises/A+ semantics adapted to the Ceylon language
          Deferred<String> deferred = Deferred<String>();
          promise.then__((String s) => deferred.promise);
      
+     ## Thread safety
+     
+     The implementation is thread safe and use non blocking algorithm for maintaining the state of
+     a deferred object.
+     
      # Differences with the original specification:
 
      - the *then must return before onFulfilled or onRejected is called* is not implemented, therefore the invocation
