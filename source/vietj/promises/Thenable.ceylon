@@ -24,6 +24,15 @@ shared interface Thenable<out Value> satisfies Promised<Value> given Value satis
     throw e;
   }
 
+  doc "The then method from the Promise/A+ specification."
+  shared Promise<Result> then_<Result>(
+      <Callable<Result, Value>> onFulfilled,
+      <Result(Exception)> onRejected = rethrow<Result>) {
+	<Callable<Promise<Result>, Value>> onFulfilled2 = adaptResult<Result, Value>(onFulfilled);
+	Promise<Result>(Exception) onRejected2 = adaptResult<Result, [Exception]>(onRejected);
+	return then__(onFulfilled2, onRejected2);
+  }
+
   Promise<M> rethrow2<M>(Exception e) {
     Deferred<M> deferred = Deferred<M>();
     deferred.reject(e);
@@ -31,30 +40,12 @@ shared interface Thenable<out Value> satisfies Promised<Value> given Value satis
   }
 
     doc "The then method from the Promise/A+ specification."
-  shared Promise<Result> then_<Result>(
-      <Callable<<Result>,Value>|Callable<<Result>, []>> onFulfilled,
-      <Result(Exception)|Result()> onRejected = rethrow<Result>) {
-	return then___(onFulfilled, onRejected);
-  }
-
-  doc "The then method from the Promise/A+ specification."
-  shared Promise<Result> then__<Result>(
-      <Callable<Promise<Result>, Value>|Callable<Promise<Result>, []>> onFulfilled,
-      <Promise<Result>(Exception)|Promise<Result>()> onRejected = rethrow2<Result>) {
-	return then___<Result>(onFulfilled, onRejected);
-  }
-
-  doc "The then method from the Promise/A+ specification."
-  shared formal Promise<Result> then___<Result>(
-      <Callable<<Result|Promise<Result>>, Value>|Callable<<Result|Promise<Result>>, []>> onFulfilled,
-      <<Result|Promise<Result>>(Exception)|<Result|Promise<Result>>()> onRejected = rethrow<Result>);
+  shared formal Promise<Result> then__<Result>(
+      <Callable<Promise<Result>, Value>> onFulfilled,
+      <Promise<Result>(Exception)> onRejected = rethrow2<Result>);
 
   doc "Analog to Q finally (except that it does not consider the callback might return a promise"
-  shared void always(Callable<Anything, Value|[Exception]>|Callable<Anything, []> callback) {
-	if (is Callable<Anything, Value|[Exception]> callback) {
-	  then_(callback, callback);
-	} else if (is Callable<Anything, []> callback) {
-	  then_(callback, callback);
-	}
+  shared void always(Callable<Anything, Value|[Exception]> callback) {
+	then_(callback, callback);
   }
 }

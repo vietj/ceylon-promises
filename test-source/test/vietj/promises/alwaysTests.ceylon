@@ -29,7 +29,7 @@ void testRejectWithArg() {
 void testResolveWithEmptyArg() {
   Deferred<String> d = Deferred<String>();
   LinkedList<String|Exception> done = LinkedList<String|Exception>();
-  d.promise.always(() => done.add("done"));
+  d.promise.always((String|Exception a) => done.add("done"));
   d.resolve("abc");
   assertEquals({"done"}, done);
 }
@@ -37,7 +37,7 @@ void testResolveWithEmptyArg() {
 void testRejectWithEmptyArg() {
   Deferred<String> d = Deferred<String>();
   LinkedList<String|Exception> done = LinkedList<String|Exception>();
-  d.promise.always(() => done.add("done"));
+  d.promise.always((String|Exception a) => done.add("done"));
   d.reject(Exception());
   assertEquals({"done"}, done);
 }

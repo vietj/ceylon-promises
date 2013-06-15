@@ -52,8 +52,8 @@ void testAllRespectiveRejectedCallbacksMustExecuteInTheOrderOfTheirOriginatingCa
   value calls = LinkedList<Integer>();
   value d = Deferred<String>();	
   Promise<String> promise = d.promise;
-  promise.then_((String s) => print(s),() => calls.add(1));
-  promise.then_((String s) => print(s),() => calls.add(2));
+  promise.then_((String s) => print(s),(Exception e) => calls.add(1));
+  promise.then_((String s) => print(s),(Exception e) => calls.add(2));
   d.reject(Exception());
   assertEquals { expected = {1,2}; actual = calls; };
 }

@@ -49,14 +49,14 @@ shared class Deferred<Value>() satisfies Transitionnable<Value> & Promised<Value
   doc "The promise of this deferred."
   shared actual object promise extends Promise<Value>() {
 
-    shared actual Promise<Result> then___<Result>(
-      <<Result|Promise<Result>>(Value)|<Result|Promise<Result>>()> onFulfilled, 
-      <<Result|Promise<Result>>(Exception)|<Result|Promise<Result>>()> onRejected) {
+    shared actual Promise<Result> then__<Result>(
+      <Promise<Result>(Value)> onFulfilled, 
+      <Promise<Result>(Exception)> onRejected) {
 
       Deferred<Result> deferred = Deferred<Result>();
-      void callback<T>(<<Result|Promise<Result>>(T)|<Result|Promise<Result>>()> on, T val) {
+      void callback<T>(<Promise<Result>(T)> on, T val) {
         try {
-          Result|Promise<Result> result = dispatch(on, val);
+          Promise<Result> result = on(val);
           deferred.resolve(result);
         } catch(Exception e) {
           deferred.reject(e);
@@ -93,44 +93,6 @@ shared class Deferred<Value>() satisfies Transitionnable<Value> & Promised<Value
       }
       return deferred.promise;
     }
-  }
-
-  Promise<T> adaptValue<T>(T|Promise<T> val) {
-    if (is T val) {
-      object adapter extends Promise<T>() {
-        shared actual Promise<Result> then___<Result>(
-          <<Result|Promise<Result>>(T)|<Result|Promise<Result>>()> onFulfilled,
-          <<Result|Promise<Result>>(Exception)|<Result|Promise<Result>>()> onRejected) {
-          try {
-            Result|Promise<Result> result = dispatch(onFulfilled, val);
-            return adaptValue(result);
-          } catch(Exception e) {
-            return adaptReason<Result>(e);
-          }
-        }
-      }
-      return adapter;
-    } else if (is Promise<T> val) {
-      return val;
-    } else {
-      throw Exception("not possible");
-    }
-  }
-
-  Promise<T> adaptReason<T>(Exception reason) {
-    object adapted extends Promise<T>() {
-      shared actual Promise<Result> then___<Result>(
-        <<Result|Promise<Result>>(T)|<Result|Promise<Result>>()> onFulfilled,
-        <<Result|Promise<Result>>(Exception)|<Result|Promise<Result>>()> onRejected) {
-        try {
-          <Result|Promise<Result>> result = dispatch(onRejected, reason);
-          return adaptValue<Result>(result);
-        } catch(Exception e) {
-          return adaptReason<Result>(e);
-        }
-      }
-    }
-    return adapted;
   }
 
   void update(Promise<Value> promise) {
