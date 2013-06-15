@@ -18,8 +18,14 @@ by "Julien Viet"
 license "ASL2"
 void run() {
 
-  Deferred<String> d = Deferred<String>();
-  d.promise.always((String|Exception s) => print("done"));
+  Deferred<String, Integer> d = Deferred<String, Integer>();
+  Promise<String, Integer> p = d.promise;
+  p.then___((String s) => print("done"), (Exception e) => print("failed"), (Integer p) => print("progress " + p.string));
+  d.progress(1);
+  Promise<String, String> p2 = p.then___((String s) => s, (Exception e) => "failed", (Integer p) => "->" + p.string);
+  p2.then___((String s) => print("done 2"), (Exception e) => print("failed 2"), (String p) => print("progress 2 " + p.string));
+  d.progress(2);
   d.reject(Exception());
+  d.progress(3);
 	
 }

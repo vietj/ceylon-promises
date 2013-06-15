@@ -38,6 +38,12 @@ Promise<T> adaptValue<T>(T|Promise<T> val) {
           return adaptReason<Result>(e);
         }
       }
+      shared actual Promise<ResultValue, ResultProgress> then____<ResultValue, ResultProgress>(
+        <Callable<Promise<ResultValue>, [T]>> onFulfilled,
+        Promise<ResultValue>(Exception) onRejected,
+        Promise<ResultProgress>(Anything) onProgress) {
+	    throw Exception();
+      }
     }
     return adapter;
   } else if (is Promise<T> val) {
@@ -58,7 +64,24 @@ Promise<T> adaptReason<T>(Exception reason) {
         return adaptReason<Result>(e);
       }
     }
+    shared actual Promise<ResultValue, ResultProgress> then____<ResultValue, ResultProgress>(
+      <Callable<Promise<ResultValue>, [T]>> onFulfilled,
+      Promise<ResultValue>(Exception) onRejected,
+      Promise<ResultProgress>(Anything) onProgress) {
+	  throw Exception();
+    }
   }
   return adapted;
 }
+
+M rethrow<M>(Exception e) {
+  throw e;
+}
+
+Promise<M> rethrow2<M>(Exception e) {
+  Deferred<M> deferred = Deferred<M>();
+  deferred.reject(e);
+  return deferred.promise;
+}
+
 

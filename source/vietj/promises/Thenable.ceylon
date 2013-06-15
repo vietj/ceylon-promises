@@ -20,10 +20,6 @@ by "Julien Viet"
 license "ASL2"
 shared interface Thenable<out Value> satisfies Promised<Value> given Value satisfies Anything[] {
 	
-  M rethrow<M>(Exception e) {
-    throw e;
-  }
-
   doc "The then method from the Promise/A+ specification."
   shared Promise<Result> then_<Result>(
       <Callable<Result, Value>> onFulfilled,
@@ -33,13 +29,7 @@ shared interface Thenable<out Value> satisfies Promised<Value> given Value satis
 	return then__(onFulfilled2, onRejected2);
   }
 
-  Promise<M> rethrow2<M>(Exception e) {
-    Deferred<M> deferred = Deferred<M>();
-    deferred.reject(e);
-    return deferred.promise;
-  }
-
-    doc "The then method from the Promise/A+ specification."
+  doc "The then method from the Promise/A+ specification."
   shared formal Promise<Result> then__<Result>(
       <Callable<Promise<Result>, Value>> onFulfilled,
       <Promise<Result>(Exception)> onRejected = rethrow2<Result>);

@@ -18,7 +18,7 @@ doc "A promise represents a value that may not be available yet. The primary met
      restricted to a single value."
 by "Julien Viet"
 license "ASL2"
-shared abstract class Promise<out Value>() satisfies Term<Value, [Value]> {
+shared abstract class Promise<out Value, out Progress = Anything>() satisfies Term<Value, [Value]> {
 
   // todo optimize that and instead implement a Promise
   variable Conjonction<Value, Value, []>? c = null;
@@ -37,6 +37,21 @@ shared abstract class Promise<out Value>() satisfies Term<Value, [Value]> {
     return conj().and(other);
   }
   
+  shared Promise<ResultValue, ResultProgress> then___<ResultValue, ResultProgress>(
+      <Callable<ResultValue, [Value]>> onFulfilled,
+      ResultValue(Exception) onRejected,
+      ResultProgress(Progress) onProgress) {
+	<Callable<Promise<ResultValue>, [Value]>> onFulfilled2 = adaptResult<ResultValue, [Value]>(onFulfilled);
+	Promise<ResultValue>(Exception) onRejected2 = adaptResult<ResultValue, [Exception]>(onRejected);
+	Promise<ResultProgress>(Progress) onProgress2 = adaptResult<ResultProgress, [Progress]>(onProgress);
+	return then____(onFulfilled2, onRejected2, onProgress2);
+  }
+
+  shared formal Promise<ResultValue, ResultProgress> then____<ResultValue, ResultProgress>(
+      <Callable<Promise<ResultValue>, [Value]>> onFulfilled,
+      Promise<ResultValue>(Exception) onRejected,
+      Promise<ResultProgress>(Progress) onProgress);
+
   shared actual Promise<[Value]> promise {
     return conj().promise;
   }
