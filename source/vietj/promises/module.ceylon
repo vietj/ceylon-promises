@@ -24,7 +24,6 @@ doc "A module that provides Promises/A+ semantics adapted to the Ceylon language
      - the [[Thenable]] interface forming the ground of promises, implemented primarily by the [[Promise]] interface.
      - the [[Promise]] interface conforming to the specification, a promise is a [[Thenable]] for a single value.
      - the [[Deferred]] type providing support for the [[Promise]] interface.
-     - the [[Status]] enumerated instance with the  [[pending]], [[fulfilled]] and [[rejected]] instances.
      - the [[Term]] interface for combining promises into a conjonction promise.
 
      # Goal
@@ -105,13 +104,6 @@ doc "A module that provides Promises/A+ semantics adapted to the Ceylon language
      - the order of the arguments in the callback is in reverse order of the chaining.
      - the return type of combined promise is not [[Promise]] but [[Thenable]].
      
-     ## Callbacks
-     
-     Callbacks can have the type of the promise value or the `Exception` type, but they can also be a zero argument function
-     when the value of the reason is not meaningful:
-     
-         promise.then_(() => print(\"fulfilled\"), () => print(\"rejected\"));
-     
      ## Always
      
      The `always` method of a promise allows to be notified when the promise is fulfilled or rejected, it takes as argument
@@ -119,7 +111,7 @@ doc "A module that provides Promises/A+ semantics adapted to the Ceylon language
      
          promise.always((String|Integer) p => print(\"done!\");
      
-     Always is useful for implementing a finally clause in a chain of promise. The callback can also have zero parameter.
+     Always is useful for implementing a finally clause in a chain of promise.
      
      ## Feeding with a promise
      
@@ -147,6 +139,6 @@ doc "A module that provides Promises/A+ semantics adapted to the Ceylon language
      a language with dynamic typing."
 by "Julien Viet"
 license "ASL2"
-module vietj.promises '0.3.2' {
+module vietj.promises '0.3.3' {
   import java.base '7';
 }
