@@ -34,6 +34,7 @@ void run() {
   suite("vietj.promises", "Conjonction" -> conjonctionTests);
   suite("vietj.promises", "Variance" -> varianceTests);
   suite("vietj.promises", "Always" -> alwaysTests);
+  suite("vietj.promises", "Future" -> futureTests);
 
   useCases();
 

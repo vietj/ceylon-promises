@@ -39,7 +39,7 @@ shared interface Thenable<out Value> satisfies Promised<Value> given Value satis
     return deferred.promise;
   }
 
-    doc "The then method from the Promise/A+ specification."
+  doc "The then method from the Promise/A+ specification."
   shared formal Promise<Result> then__<Result>(
       <Callable<Promise<Result>, Value>> onFulfilled,
       <Promise<Result>(Exception)> onRejected = rethrow2<Result>);
@@ -47,5 +47,17 @@ shared interface Thenable<out Value> satisfies Promised<Value> given Value satis
   doc "Analog to Q finally (except that it does not consider the callback might return a promise"
   shared void always(Callable<Anything, Value|[Exception]> callback) {
 	then_(callback, callback);
+  }
+  
+  doc "Create and return a future for this thenable. The future allows to follow the resolution of the
+       promise in a *blocking* fashion:
+       
+       - if this thenable is fulfilled then the future will return the value
+       - if this thenable is rejected then the future will return the reason
+       
+       This class should be used when a thread needs to block until this thenable is resolved only, i.e
+       it defeats the purpose of the promise programming model."
+  shared Future<Value> future {
+  	return FutureImpl<Value>(this);
   }
 }
