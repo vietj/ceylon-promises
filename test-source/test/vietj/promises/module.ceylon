@@ -17,5 +17,6 @@ module test.vietj.promises '0.3.5' {
   import vietj.promises '0.3.5';
   import ceylon.test '0.5';
   import ceylon.collection '0.5';
+  import java.base '7';
 
 }

@@ -23,7 +23,11 @@ shared interface Future<out Value> {
        does not block."
   shared formal <Value|Exception>? peek();
 
-  doc "Block until the value is available or until a timeout occurs. When the times out occuts 
-       a timeout exception is thrown."
-  shared formal Value|Exception get(doc "The timeout in milliseconds" Integer timeOut = 20000);
+  doc "Block until:
+       - the value is available
+       - the thread is interrupted
+       - an optional timeout occurs
+       
+       When the timeout occurs an exception is thrown."
+  shared formal Value|Exception get(doc "The timeout in milliseconds, a negative value means no timeout" Integer timeOut = -1);
 }

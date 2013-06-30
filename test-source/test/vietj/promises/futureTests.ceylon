@@ -1,5 +1,6 @@
 import vietj.promises { ... }
 import ceylon.test { ... }
+import java.lang { Thread { sleep, currentThread } , Runnable }
 
 shared void futureTests() {
   testPromisePeekValue();
@@ -7,6 +8,7 @@ shared void futureTests() {
   testPromiseGetValue();
   testPromiseGetReason();
   testPromiseTimeOut();
+  testPromiseInterrupted();
   testThenable();
 }
 
@@ -53,6 +55,27 @@ void testPromiseTimeOut() {
   try {
   	f.get(20);
   	fail("Was expecting an exception");
+  } catch (Exception e) {
+  	// Ok
+  }
+}
+
+void testPromiseInterrupted() {
+  Deferred<String> d = Deferred<String>();
+  Promise<String> p = d.promise;
+  value f = p.future;
+  Thread current = currentThread();
+  object t extends Thread() {
+  	shared actual void run() {
+      // Sleep 500ms should be more than enough for making the test pass
+  	  sleep(500);
+      current.interrupt();
+  	}
+  }
+  t.start();
+  try {
+  	f.get();
+  	fail("Was expecting an interrupt");
   } catch (Exception e) {
   	// Ok
   }

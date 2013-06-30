@@ -67,11 +67,14 @@ shared abstract class Promise<out Value>() satisfies Term<Value, [Value]> {
       outer.then_(reportValue, reportReason);
       shared actual <Value|Exception>? peek() => ref.get();
       shared actual Value|Exception get(Integer timeOut) {
-        if (latch.await(timeOut, seconds)) {
-          return ref.get();
+        if (timeOut < 0) {
+          latch.await();
         } else {
-          throw Exception("Timed out waiting for :" + outer.string);
+          if (!latch.await(timeOut, seconds)) {
+            throw Exception("Timed out waiting for :" + outer.string);
+          }
         }
+        return ref.get();
       }
 	}
   	return f;
