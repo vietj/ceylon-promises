@@ -126,6 +126,18 @@ doc "A module that provides Promises/A+ semantics adapted to the Ceylon language
          Deferred<String> deferred = Deferred<String>();
          promise.then__((String s) => deferred.promise);
      
+     ## Future
+     
+     Sometimes it is convenient to block until a promise is resolved, for this purpose a promise can be turned
+     into a [[Future]] via its future:
+     
+         Promise<String> promise = getPromise();
+         Future<String|Exception> future = promise.future();
+         String|Exception resolution = future.get(10000);
+     
+     Keep in mind that this is not the way you should use promises as this defeats the non blocking model. Nevertheless
+     can be useful to block (for instance: unit testing purposes).
+     
      ## Thread safety
      
      The implementation is thread safe and use non blocking algorithm for maintaining the state of
