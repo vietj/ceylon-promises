@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-import java.util.concurrent { CountDownLatch, TimeUnit { seconds = \iMILLISECONDS } }
-import java.util.concurrent.atomic { AtomicReference }
-
 doc "A future value."
 by "Julien Viet"
 license "ASL2"
@@ -29,36 +26,4 @@ shared interface Future<out Value> {
   doc "Block until the value is available or until a timeout occurs. When the times out occuts 
        a timeout exception is thrown."
   shared formal Value|Exception get(doc "The timeout in milliseconds" Integer timeOut = 20000);
-}
-
-class FutureImpl<out Value>(Thenable<Value> thenable)
-  satisfies Future<Value>
-  given Value satisfies Anything[] {
-
-  CountDownLatch latch = CountDownLatch(1);
-  AtomicReference<Value|Exception> ref = AtomicReference<Value|Exception>();
-
-  void reportReason(Exception e) {
-  	ref.set(e);
-    latch.countDown(); 
-  }
-  
-  void reportValue(Value t) {
-  	ref.set(t);
-    latch.countDown();
-  }
-  
-  thenable.then_(flatten(reportValue), reportReason);
-
-  shared actual <Value|Exception>? peek() {
-	return ref.get();
-  }
-
-  shared actual Value|Exception get(doc "The timeout in milliseconds" Integer timeOut) {
-    if (latch.await(timeOut, seconds)) {
-      return ref.get();
-    } else {
-      throw Exception("Timed out waiting for :" + thenable.string);
-    }
-  }
 }

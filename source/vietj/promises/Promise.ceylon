@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import java.util.concurrent { CountDownLatch, TimeUnit { seconds = \iMILLISECONDS } }
+import java.util.concurrent.atomic { AtomicReference }
+ 
 doc "A promise represents a value that may not be available yet. The primary method for
       interacting with a promise is its `then` method. A promise is a [[Thenable]] element
      restricted to a single value."
@@ -39,5 +42,38 @@ shared abstract class Promise<out Value>() satisfies Term<Value, [Value]> {
   
   shared actual Promise<[Value]> promise {
     return conj().promise;
+  }
+
+  doc "Create and return a future for this promise. The future allows to follow the resolution of the
+       promise in a *blocking* fashion:
+       
+       - if this promise is fulfilled then the future will return the value
+       - if this promise is rejected then the future will return the reason
+       
+       This class should be used when a thread needs to block until this promise is resolved only, i.e
+       it defeats the purpose of the promise programming model."
+  shared Future<Value> future {
+	object f satisfies Future<Value> {
+      CountDownLatch latch = CountDownLatch(1);
+      AtomicReference<Value|Exception> ref = AtomicReference<Value|Exception>();
+      void reportReason(Exception e) {
+  	    ref.set(e);
+        latch.countDown(); 
+      }
+      void reportValue(Value t) {
+  	    ref.set(t);
+        latch.countDown();
+      }
+      outer.then_(reportValue, reportReason);
+      shared actual <Value|Exception>? peek() => ref.get();
+      shared actual Value|Exception get(Integer timeOut) {
+        if (latch.await(timeOut, seconds)) {
+          return ref.get();
+        } else {
+          throw Exception("Timed out waiting for :" + outer.string);
+        }
+      }
+	}
+  	return f;
   }
 }

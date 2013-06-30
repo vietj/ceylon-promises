@@ -2,25 +2,26 @@ import vietj.promises { ... }
 import ceylon.test { ... }
 
 shared void futureTests() {
-  testPeekValue();
-  testPeekReason();
-  testGetValue();
-  testGetReason();
-  testTimeOut();
+  testPromisePeekValue();
+  testPromisePeekReason();
+  testPromiseGetValue();
+  testPromiseGetReason();
+  testPromiseTimeOut();
+  testThenable();
 }
 
-void testPeekValue() {
+void testPromisePeekValue() {
   Deferred<String> d = Deferred<String>();
-  Thenable<[String]> p = d.promise;
+  Promise<String> p = d.promise;
   value f = p.future;
   assertNull(f.peek());
   d.resolve("abc");
-  assertEquals(["abc"], f.peek());	
+  assertEquals("abc", f.peek());	
 }
 
-void testPeekReason() {
+void testPromisePeekReason() {
   Deferred<String> d = Deferred<String>();
-  Thenable<[String]> p = d.promise;
+  Promise<String> p = d.promise;
   value f = p.future;
   assertNull(f.peek());
   Exception r = Exception();
@@ -28,26 +29,26 @@ void testPeekReason() {
   assertEquals(r, f.peek());	
 }
 
-void testGetValue() {
+void testPromiseGetValue() {
   Deferred<String> d = Deferred<String>();
-  Thenable<[String]> p = d.promise;
+  Promise<String> p = d.promise;
   value f = p.future;
   d.resolve("abc");
-  assertEquals(["abc"], f.get());	
+  assertEquals("abc", f.get());	
 }
 
-void testGetReason() {
+void testPromiseGetReason() {
   Deferred<String> d = Deferred<String>();
-  Thenable<[String]> p = d.promise;
+  Promise<String> p = d.promise;
   value f = p.future;
   Exception r = Exception();
   d.reject(r);
   assertEquals(r, f.get());	
 }
 
-void testTimeOut() {
+void testPromiseTimeOut() {
   Deferred<String> d = Deferred<String>();
-  Thenable<[String]> p = d.promise;
+  Promise<String> p = d.promise;
   value f = p.future;
   try {
   	f.get(20);
@@ -56,3 +57,13 @@ void testTimeOut() {
   	// Ok
   }
 }
+
+void testThenable() {
+  Deferred<String> d = Deferred<String>();
+  Thenable<[String]> t = d.promise;
+  Promise<[String]> p = t.promise;
+  value f = p.future;
+  d.resolve("abc");
+  assertEquals(["abc"], f.get());	
+}
+

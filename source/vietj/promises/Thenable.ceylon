@@ -48,16 +48,4 @@ shared interface Thenable<out Value> satisfies Promised<Value> given Value satis
   shared void always(Callable<Anything, Value|[Exception]> callback) {
 	then_(callback, callback);
   }
-  
-  doc "Create and return a future for this thenable. The future allows to follow the resolution of the
-       promise in a *blocking* fashion:
-       
-       - if this thenable is fulfilled then the future will return the value
-       - if this thenable is rejected then the future will return the reason
-       
-       This class should be used when a thread needs to block until this thenable is resolved only, i.e
-       it defeats the purpose of the promise programming model."
-  shared Future<Value> future {
-  	return FutureImpl<Value>(this);
-  }
 }
