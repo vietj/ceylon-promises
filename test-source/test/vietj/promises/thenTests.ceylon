@@ -18,72 +18,76 @@ import ceylon.test { ... }
 import ceylon.collection { ... }
 
 class Thrower<T>() {
-  shared LinkedList<Exception> thrown = LinkedList<Exception>();
-  shared String m(T t) {
-    Exception e = Exception();
-    thrown.add(e);
-    throw e;
-  }
+    shared LinkedList<Exception> thrown = LinkedList<Exception>();
+    shared String m(T t) {
+        Exception e = Exception();
+        thrown.add(e);
+        throw e;
+    }
 }
 
-@doc "Test the then method but not the Promise Resolution Procedure"
+"Test the then method but not the Promise Resolution Procedure"
 shared void thenTests() {
-
-  testAllRespectiveFulfilledCallbacksMustExecuteInTheOrderOfTheirOriginatingCallsToThen();
-  testAllRespectiveRejectedCallbacksMustExecuteInTheOrderOfTheirOriginatingCallsToThen();
-  testReturnedPromiseMustBeRejectWithSameReasonWhenOnFulfilledThrowsAnException();
-  testReturnedPromiseMustBeRejectWithSameReasonWhenOnRejectedThrowsAnException();
-  // testReturnedPromiseMustBeFulfilledWithSameValueWhenOnFulfilledIsNotAFunction();
-  testReturnedPromiseMustBeRejectedWithSameValueWhenOnRejectedIsNotAFunction();
-
+    
+    testAllRespectiveFulfilledCallbacksMustExecuteInTheOrderOfTheirOriginatingCallsToThen();
+    testAllRespectiveRejectedCallbacksMustExecuteInTheOrderOfTheirOriginatingCallsToThen();
+    testReturnedPromiseMustBeRejectWithSameReasonWhenOnFulfilledThrowsAnException();
+    testReturnedPromiseMustBeRejectWithSameReasonWhenOnRejectedThrowsAnException();
+    //testReturnedPromiseMustBeFulfilledWithSameValueWhenOnFulfilledIsNotAFunction();
+    testReturnedPromiseMustBeRejectedWithSameValueWhenOnRejectedIsNotAFunction();
+    
 }
 
 void testAllRespectiveFulfilledCallbacksMustExecuteInTheOrderOfTheirOriginatingCallsToThen() {
-  value calls = LinkedList<Integer>();
-  value d = Deferred<String>();	
-  Promise<String> promise = d.promise;
-  promise.then_((String s) => calls.add(1));
-  promise.then_((String s) => calls.add(2));
-  d.resolve("");
-  assertEquals { expected = {1,2}; actual = calls; };
+    value calls = LinkedList<Integer>();
+    value d = Deferred<String>();	
+    Promise<String> promise = d.promise;
+    promise.then_((String s) => calls.add(1));
+    promise.then_((String s) => calls.add(2));
+    d.resolve("");
+    
+    assertEquals { expected = {1,2}; actual = calls; };
 }
 
 void testAllRespectiveRejectedCallbacksMustExecuteInTheOrderOfTheirOriginatingCallsToThen() {
-  value calls = LinkedList<Integer>();
-  value d = Deferred<String>();	
-  Promise<String> promise = d.promise;
-  promise.then_((String s) => print(s),(Exception e) => calls.add(1));
-  promise.then_((String s) => print(s),(Exception e) => calls.add(2));
-  d.reject(Exception());
-  assertEquals { expected = {1,2}; actual = calls; };
+    value calls = LinkedList<Integer>();
+    value d = Deferred<String>();	
+    Promise<String> promise = d.promise;
+    promise.then_((String s) => print(s),(Exception e) => calls.add(1));
+    promise.then_((String s) => print(s),(Exception e) => calls.add(2));
+    d.reject(Exception());
+    
+    assertEquals { expected = {1,2}; actual = calls; };
 }
 
 void testReturnedPromiseMustBeRejectWithSameReasonWhenOnFulfilledThrowsAnException() {
-  Thrower<Integer> doneThrower = Thrower<Integer>();
-  LinkedList<String> done = LinkedList<String>();
-  Thrower<Exception> failedThrower = Thrower<Exception>();
-  LinkedList<Exception> failed = LinkedList<Exception>();
-  Deferred<Integer> deferred = Deferred<Integer>();
-  Promise<Integer> promise = deferred.promise;
-  promise.then_(doneThrower.m, failedThrower.m).then_(done.add, failed.add);
-  deferred.resolve(3);
-  assertEquals { expected = {}; actual = done; };
-  assertEquals { expected = failed; actual = doneThrower.thrown; };
-  assertEquals { expected = {}; actual = failedThrower.thrown; };
+    Thrower<Integer> doneThrower = Thrower<Integer>();
+    LinkedList<String> done = LinkedList<String>();
+    Thrower<Exception> failedThrower = Thrower<Exception>();
+    LinkedList<Exception> failed = LinkedList<Exception>();
+    Deferred<Integer> deferred = Deferred<Integer>();
+    Promise<Integer> promise = deferred.promise;
+    promise.then_(doneThrower.m, failedThrower.m).then_(done.add, failed.add);
+    deferred.resolve(3);
+    
+    assertEquals { expected = {}; actual = done; };
+    assertEquals { expected = failed; actual = doneThrower.thrown; };
+    assertEquals { expected = {}; actual = failedThrower.thrown; };
 }
 
 void testReturnedPromiseMustBeRejectWithSameReasonWhenOnRejectedThrowsAnException() {
-  Thrower<Integer> doneThrower = Thrower<Integer>();
-  Thrower<Exception> failedThrower = Thrower<Exception>();
-  LinkedList<String> done = LinkedList<String>();
-  LinkedList<Exception> failed = LinkedList<Exception>();
-  Deferred<Integer> deferred = Deferred<Integer>();
-  Promise<Integer> promise = deferred.promise;
-  promise.then_(doneThrower.m, failedThrower.m).then_(done.add, failed.add);
-  deferred.reject(Exception());
-  assertEquals { expected = {}; actual = done; };
-  assertEquals { expected = {}; actual = doneThrower.thrown; };
-  assertEquals { expected = failed; actual = failedThrower.thrown; };
+    Thrower<Integer> doneThrower = Thrower<Integer>();
+    Thrower<Exception> failedThrower = Thrower<Exception>();
+    LinkedList<String> done = LinkedList<String>();
+    LinkedList<Exception> failed = LinkedList<Exception>();
+    Deferred<Integer> deferred = Deferred<Integer>();
+    Promise<Integer> promise = deferred.promise;
+    promise.then_(doneThrower.m, failedThrower.m).then_(done.add, failed.add);
+    deferred.reject(Exception());
+    
+    assertEquals { expected = {}; actual = done; };
+    assertEquals { expected = {}; actual = doneThrower.thrown; };
+    assertEquals { expected = failed; actual = failedThrower.thrown; };
 }
 
 // Disabled until we cane make onFulfilled optional again
@@ -96,12 +100,14 @@ void testReturnedPromiseMustBeFulfilledWithSameValueWhenOnFulfilledIsNotAFunctio
   assertEquals { expected = {"a"}; actual = a; };
 }
 */
+
 void testReturnedPromiseMustBeRejectedWithSameValueWhenOnRejectedIsNotAFunction() {
-  LinkedList<Exception> a = LinkedList<Exception>();
-  Deferred<String> d = Deferred<String>();
-  Promise<String> promise = d.promise;
-  promise.then_((String s) => s).then_((String s) => print(s),a.add);
-  Exception e = Exception();
-  d.reject(e);
-  assertEquals { expected = {e}; actual = a; };
+    LinkedList<Exception> a = LinkedList<Exception>();
+    Deferred<String> d = Deferred<String>();
+    Promise<String> promise = d.promise;
+    promise.then_((String s) => s).then_((String s) => print(s),a.add);
+    Exception e = Exception();
+    d.reject(e);
+
+    assertEquals { expected = {e}; actual = a; };
 }
