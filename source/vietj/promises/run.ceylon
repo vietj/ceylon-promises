@@ -14,8 +14,7 @@
  * limitations under the License.
  */
  
-by "Julien Viet"
-license "ASL2"
+by("Julien Viet")
 void run() {
 
   Deferred<String> d = Deferred<String>();

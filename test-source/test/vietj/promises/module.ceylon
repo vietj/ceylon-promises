@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-module test.vietj.promises '0.3.6' {
-  import vietj.promises '0.3.6';
-  import ceylon.test '0.5';
-  import ceylon.collection '0.5';
+module test.vietj.promises '0.4.0' {
+  import vietj.promises '0.4.0';
+  import ceylon.test '0.6';
+  import ceylon.collection '0.6';
   import java.base '7';
 
 }

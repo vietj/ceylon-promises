@@ -4,7 +4,7 @@
 -->
 <project name="vietj.promises" default="test">
 
-    <property name="ceylon.home" value="/Users/julien/java/ceylon-0.5"/>
+    <property name="ceylon.home" value="/Users/julien/java/ceylon-0.6"/>
     <property name="ceylon.ant.lib" value="${ceylon.home}/lib/ceylon-ant.jar"/>
     <property name="source.encoding" value="UTF-8"/>
 
@@ -37,18 +37,18 @@
     </target>
 
     <target name="run" depends="compile">
-        <ceylon-run module="vietj.promises/0.3.6"/>
+        <ceylon-run module="vietj.promises/0.4.0"/>
     </target>
 
     <target name="run-js" depends="compile-js">
-        <ceylon-run-js module="vietj.promises/0.3.6"/>
+        <ceylon-run-js module="vietj.promises/0.4.0"/>
     </target>
 
     <target name="test" depends="compile">
         <ceylon-compile encoding="${source.encoding}" src="test-source">
             <module name="test.vietj.promises"/>
         </ceylon-compile>
-        <ceylon-run module="test.vietj.promises/0.3.6"/>
+        <ceylon-run module="test.vietj.promises/0.4.0"/>
     </target>
 
     <target name="clean">

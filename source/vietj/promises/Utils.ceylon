@@ -14,7 +14,7 @@
  * limitations under the License.
  */
  
-doc "Adapt a Callable<Result, Value> to Callable<Promise<Result>, Value>"
+"Adapt a Callable<Result, Value> to Callable<Promise<Result>, Value>"
 Callable<Promise<Result>, Value> adaptResult<Result, Value>(Callable<Result, Value> a) given Value satisfies Anything[] {
   Result(Value) b = unflatten(a);
   Promise<Result> c(Value d) {

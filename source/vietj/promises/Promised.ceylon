@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-by "Julien Viet"
-license "ASL2"
-doc "The promised interface provides a promise"
+"The promised interface provides a promise"
+by("Julien Viet")
 shared interface Promised<out Value> {
 
-  @doc "The promise"
-  shared formal Promise<Value> promise;
-	
+    "The promise"
+    shared formal Promise<Value> promise;
+
 }
