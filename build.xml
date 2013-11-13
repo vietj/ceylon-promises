@@ -37,18 +37,18 @@
     </target>
 
     <target name="run" depends="compile">
-        <ceylon-run module="vietj.promises/0.4.2"/>
+        <ceylon-run module="vietj.promises/0.5.0"/>
     </target>
 
     <target name="run-js" depends="compile-js">
-        <ceylon-run-js module="vietj.promises/0.4.2"/>
+        <ceylon-run-js module="vietj.promises/0.5.0"/>
     </target>
 
     <target name="test" depends="compile">
         <ceylon-compile encoding="${source.encoding}" src="test-source">
             <module name="test.vietj.promises"/>
         </ceylon-compile>
-        <ceylon-run module="test.vietj.promises/0.4.2"/>
+        <ceylon-run module="test.vietj.promises/0.5.0"/>
     </target>
 
     <target name="clean">
