@@ -17,16 +17,6 @@ import vietj.promises { ... }
 import ceylon.test { ... }
 import ceylon.collection { ... }
 
-"Testing The Promise Resolution Procedure"
-shared void resolutionTests() {
-    
-    testOnFulfilledAdoptPromiseThatResolves();
-    testOnFulfilledAdoptPromiseThatRejects();
-    testOnRejectedAdoptPromiseThatResolves();
-    testOnRejectedAdoptPromiseThatRejects();
-    
-}
-
 class Test() {
     shared LinkedList<Integer> d1Values = LinkedList<Integer>();
     shared LinkedList<Exception> d1Reasons = LinkedList<Exception>();
@@ -43,7 +33,7 @@ class Test() {
     }
 }
 
-void testOnFulfilledAdoptPromiseThatResolves() {
+test void testOnFulfilledAdoptPromiseThatResolves() {
     Test test = Test();
     Promise<String> f(Integer val) {
         test.d1Values.add(val);
@@ -62,7 +52,7 @@ void testOnFulfilledAdoptPromiseThatResolves() {
     test.check({3},{},{"foo"},{});
 }
 
-void testOnFulfilledAdoptPromiseThatRejects() {
+test void testOnFulfilledAdoptPromiseThatRejects() {
     Test test = Test();
     Promise<String> f(Integer val) {
         test.d1Values.add(val);
@@ -82,7 +72,7 @@ void testOnFulfilledAdoptPromiseThatRejects() {
     test.check({3},{},{},{e});
 }
 
-void testOnRejectedAdoptPromiseThatResolves() {
+test void testOnRejectedAdoptPromiseThatResolves() {
     Test test = Test();
     Promise<String> f(Integer val) {
         test.d1Values.add(val);
@@ -102,7 +92,7 @@ void testOnRejectedAdoptPromiseThatResolves() {
     test.check({},{e},{"foo"},{});
 }
 
-void testOnRejectedAdoptPromiseThatRejects() {
+test void testOnRejectedAdoptPromiseThatRejects() {
     Test test = Test();
     Promise<String> f(Integer val) {
         test.d1Values.add(val);

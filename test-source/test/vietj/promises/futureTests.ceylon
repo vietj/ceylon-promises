@@ -2,17 +2,7 @@ import vietj.promises { ... }
 import ceylon.test { ... }
 import java.lang { Thread { sleep, currentThread } }
 
-shared void futureTests() {
-    testPromisePeekValue();
-    testPromisePeekReason();
-    testPromiseGetValue();
-    testPromiseGetReason();
-    testPromiseTimeOut();
-    testPromiseInterrupted();
-    testThenable();
-}
-
-void testPromisePeekValue() {
+test void testPromisePeekValue() {
     Deferred<String> d = Deferred<String>();
     Promise<String> p = d.promise;
     value f = p.future;
@@ -21,7 +11,7 @@ void testPromisePeekValue() {
     assertEquals("abc", f.peek());	
 }
 
-void testPromisePeekReason() {
+test void testPromisePeekReason() {
     Deferred<String> d = Deferred<String>();
     Promise<String> p = d.promise;
     value f = p.future;
@@ -31,7 +21,7 @@ void testPromisePeekReason() {
     assertEquals(r, f.peek());	
 }
 
-void testPromiseGetValue() {
+test void testPromiseGetValue() {
     Deferred<String> d = Deferred<String>();
     Promise<String> p = d.promise;
     value f = p.future;
@@ -39,7 +29,7 @@ void testPromiseGetValue() {
     assertEquals("abc", f.get());	
 }
 
-void testPromiseGetReason() {
+test void testPromiseGetReason() {
     Deferred<String> d = Deferred<String>();
     Promise<String> p = d.promise;
     value f = p.future;
@@ -48,7 +38,7 @@ void testPromiseGetReason() {
     assertEquals(r, f.get());	
 }
 
-void testPromiseTimeOut() {
+test void testPromiseTimeOut() {
     Deferred<String> d = Deferred<String>();
     Promise<String> p = d.promise;
     value f = p.future;
@@ -60,7 +50,7 @@ void testPromiseTimeOut() {
     }
 }
 
-void testPromiseInterrupted() {
+test void testPromiseInterrupted() {
     Deferred<String> d = Deferred<String>();
     Promise<String> p = d.promise;
     value f = p.future;
@@ -81,7 +71,7 @@ void testPromiseInterrupted() {
     }
 }
 
-void testThenable() {
+test void testThenable() {
     Deferred<String> d = Deferred<String>();
     Thenable<[String]> t = d.promise;
     Promise<[String]> p = t.promise;

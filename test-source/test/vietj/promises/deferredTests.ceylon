@@ -17,7 +17,7 @@ import vietj.promises { ... }
 import ceylon.test { ... }
 import ceylon.collection { ... }
 
-void testResolve() {
+test void testResolve() {
     
     void perform(<String|Exception>* actions) {
         LinkedList<String> done = LinkedList<String>();
@@ -45,7 +45,7 @@ void testResolve() {
     perform("value", Exception());
 }
 
-void testReject() {
+test void testReject() {
     Exception reason = Exception();
     
     void perform(<String|Exception>* actions) {
@@ -73,7 +73,7 @@ void testReject() {
     perform(reason, Exception());
 }
 
-void testThenAfterResolve() {
+test void testThenAfterResolve() {
     LinkedList<String> done = LinkedList<String>();
     ExceptionCollector failed = ExceptionCollector();
     
@@ -86,7 +86,7 @@ void testThenAfterResolve() {
     assertEquals { expected = {}; actual = failed.collected; };
 }
 
-void testThenAfterReject() {
+test void testThenAfterReject() {
     LinkedList<String> done = LinkedList<String>();
     ExceptionCollector failed = ExceptionCollector();
     Exception reason = Exception();
@@ -100,7 +100,7 @@ void testThenAfterReject() {
     assertEquals { expected = {reason}; actual = failed.collected; };
 }
 
-shared void deferredTests() {
+test shared void deferredTests() {
     testResolve();
     testReject();
     testThenAfterResolve();

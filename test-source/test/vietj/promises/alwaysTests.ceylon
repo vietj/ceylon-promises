@@ -2,14 +2,7 @@ import vietj.promises { ... }
 import ceylon.test { ... }
 import ceylon.collection { ... }
 
-shared void alwaysTests() {
-    testResolveWithArg();
-    testRejectWithArg();
-    testResolveWithEmptyArg();
-    testRejectWithEmptyArg();	
-}
-
-void testResolveWithArg() {
+test void testResolveWithArg() {
     Deferred<String> d = Deferred<String>();
     LinkedList<String|Exception> done = LinkedList<String|Exception>();
     d.promise.always(done.add);
@@ -17,7 +10,7 @@ void testResolveWithArg() {
     assertEquals({"abc"}, done);
 }
 
-void testRejectWithArg() {
+test void testRejectWithArg() {
     Deferred<String> d = Deferred<String>();
     LinkedList<String|Exception> done = LinkedList<String|Exception>();
     d.promise.always(done.add);
@@ -26,7 +19,7 @@ void testRejectWithArg() {
     assertEquals({e}, done);
 }
 
-void testResolveWithEmptyArg() {
+test void testResolveWithEmptyArg() {
     Deferred<String> d = Deferred<String>();
     LinkedList<String|Exception> done = LinkedList<String|Exception>();
     d.promise.always((String|Exception a) => done.add("done"));
@@ -34,7 +27,7 @@ void testResolveWithEmptyArg() {
     assertEquals({"done"}, done);
 }
 
-void testRejectWithEmptyArg() {
+test void testRejectWithEmptyArg() {
     Deferred<String> d = Deferred<String>();
     LinkedList<String|Exception> done = LinkedList<String|Exception>();
     d.promise.always((String|Exception a) => done.add("done"));

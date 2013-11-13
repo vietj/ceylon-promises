@@ -17,15 +17,7 @@ import vietj.promises { ... }
 import ceylon.test { ... }
 import ceylon.collection { ... }
 
-shared void conjonctionTests() {
-
-    testResolveConjonction();
-    testRejectConjonction();
-    testNestedConjonctions();
-
-}
-
-void testResolveConjonction() {
+test void testResolveConjonction() {
     value d1 = Deferred<String>();
     value d2 = Deferred<Integer>();
     value d3 = Deferred<Boolean>();
@@ -50,7 +42,7 @@ void testResolveConjonction() {
     assertEquals { expected = {}; actual = b; };
 }
 
-void testRejectConjonction() {
+test void testRejectConjonction() {
     
     class Test() {
         
@@ -88,7 +80,7 @@ void testRejectConjonction() {
     assertEquals { expected = {e}; actual = t3.b; };
 }
 
-void testNestedConjonctions() {
+test void testNestedConjonctions() {
 
     value d1 = Deferred<String>();
     value d2 = Deferred<Integer>();

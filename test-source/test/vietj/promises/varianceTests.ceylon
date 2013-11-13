@@ -15,18 +15,13 @@
  */
 
 import vietj.promises { ... }
-
-"This test does not check much but rather writes how variance behaves"
-shared void varianceTests() {
-    testInheritance();
-    testConjunction();
-}
+import ceylon.test { ... }
 
 class Foo() {}
 class Bar() extends Foo() {}
 class Juu() extends Bar() {}
 
-void testConjunction() {
+test void testConjunction() {
     Deferred<Bar> d1 = Deferred<Bar>();
     Deferred<Bar> d2 = Deferred<Bar>();
     Promise<Bar> p1 = d1.promise;
@@ -40,7 +35,7 @@ void testConjunction() {
     d2.resolve(Bar());
 }
 
-void testInheritance() {
+test void testInheritance() {
     
     Deferred<Bar> barDeferred = Deferred<Bar>();
     

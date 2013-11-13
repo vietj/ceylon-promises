@@ -26,18 +26,10 @@ class ExceptionCollector() {
 }
 
 void run() {
-
-    suite("vietj.promises", "Deferred" -> deferredTests);
-    suite("vietj.promises", "Promise" -> promiseTests);
-    suite("vietj.promises", "Then method" -> thenTests);
-    suite("vietj.promises", "Resolution Procedure" -> resolutionTests);
-    suite("vietj.promises", "Conjonction" -> conjonctionTests);
-    suite("vietj.promises", "Variance" -> varianceTests);
-    suite("vietj.promises", "Always" -> alwaysTests);
-    suite("vietj.promises", "Future" -> futureTests);
-
+	value testRunner = createTestRunner([`module test.vietj.promises`]);	
+	value result = testRunner.run();
+	print(result);
     useCases();
-
 }
 
 void useCases() {

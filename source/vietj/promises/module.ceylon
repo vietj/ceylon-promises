@@ -152,6 +152,6 @@
  a language with dynamic typing."
 by("Julien Viet")
 license("ASL2")
-module vietj.promises '0.4.2' {
-  import java.base '7';
+module vietj.promises "0.4.2" {
+  import java.base "7";
 }
