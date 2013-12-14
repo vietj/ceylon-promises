@@ -2,7 +2,7 @@
 <!--
     Sample Ceylon build script using Ant.
 -->
-<project name="vietj.promises" default="test">
+<project name="ceylon.promises" default="test">
 
     <property environment="env"/>
     <property name="ceylon.home" value="${env.CEYLON_HOME}"/>
@@ -21,35 +21,35 @@
 
     <target name="compile" depends="ceylon-ant-taskdefs">
         <ceylon-compile encoding="${source.encoding}">
-            <module name="vietj.promises"/>
+            <module name="ceylon.promises"/>
         </ceylon-compile>
     </target>
 
     <target name="compile-js" depends="ceylon-ant-taskdefs">
         <ceylon-compile-js encoding="${source.encoding}">
-            <module name="vietj.promises"/>
+            <module name="ceylon.promises"/>
         </ceylon-compile-js>
     </target>
 
     <target name="doc" depends="ceylon-ant-taskdefs">
         <ceylon-doc encoding="${source.encoding}">
-            <module name="vietj.promises"/>
+            <module name="ceylon.promises"/>
         </ceylon-doc>
     </target>
 
     <target name="run" depends="compile">
-        <ceylon-run module="vietj.promises/0.5.0"/>
+        <ceylon-run module="ceylon.promises/0.5.0"/>
     </target>
 
     <target name="run-js" depends="compile-js">
-        <ceylon-run-js module="vietj.promises/0.5.0"/>
+        <ceylon-run-js module="ceylon.promises/0.5.0"/>
     </target>
 
     <target name="test" depends="compile">
         <ceylon-compile encoding="${source.encoding}" src="test-source">
-            <module name="test.vietj.promises"/>
+            <module name="test.ceylon.promises"/>
         </ceylon-compile>
-        <ceylon-run module="test.vietj.promises/0.5.0"/>
+        <ceylon-run module="test.ceylon.promises/0.5.0"/>
     </target>
 
     <target name="clean">

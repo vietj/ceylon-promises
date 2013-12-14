@@ -1,4 +1,4 @@
-import vietj.promises { ... }
+import ceylon.promises { ... }
 import ceylon.test { ... }
 import java.lang { Thread { sleep, currentThread } }
 

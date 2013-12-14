@@ -1,4 +1,4 @@
-import vietj.promises { ... }
+import ceylon.promises { ... }
 import ceylon.test { ... }
 import ceylon.collection { ... }
 
