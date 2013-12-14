@@ -4,7 +4,8 @@
 -->
 <project name="vietj.promises" default="test">
 
-    <property name="ceylon.home" value="/Users/julien/java/ceylon-1.0.0"/>
+    <property environment="env"/>
+    <property name="ceylon.home" value="${env.CEYLON_HOME}"/>
     <property name="ceylon.ant.lib" value="${ceylon.home}/lib/ceylon-ant.jar"/>
     <property name="source.encoding" value="UTF-8"/>
 
